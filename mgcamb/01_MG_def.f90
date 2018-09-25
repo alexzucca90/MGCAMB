@@ -1,5 +1,5 @@
 !> @file 01_MG_def.f90
-!! This file contains the EFTCAMB compile time options.
+!! This file contains the MGCAMB compile time options.
 !> @author: Alex Zucca azucca@sfu.ca
 
 module MG_def
@@ -8,7 +8,7 @@ module MG_def
 
     implicit none
 
-    character(LEN=*), parameter :: MGCAMB_version = 'V3.0 Mar18'
+    character(LEN=*), parameter :: MGCAMB_version = 'V3.0 Aug18'
 
     real(dl), parameter :: MGbackgroundcutoff = 0._dl !< Smallest scale factor that the code should
     !!    consider when copmputing the background. Set to zero, change background at all times.

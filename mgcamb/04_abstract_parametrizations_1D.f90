@@ -1,40 +1,41 @@
 !----------------------------------------------------------------------------------------
 !
-! This file is part of EFTCAMB.
+! This file is part of MGCAMB.
 !
-! Copyright (C) 2013-2017 by the EFTCAMB authors
+! Copyright (C) 2013-2017 by the MGCAMB authors
 !
-! The EFTCAMB code is free software;
+! The MGCAMB code is free software;
 ! You can use it, redistribute it, and/or modify it under the terms
 ! of the GNU General Public License as published by the Free Software Foundation;
 ! either version 3 of the License, or (at your option) any later version.
-! The full text of the license can be found in the file eftcamb/LICENSE at
-! the top level of the EFTCAMB distribution.
+! The full text of the license can be found in the file MGcamb/LICENSE at
+! the top level of the MGCAMB distribution.
 !
 !----------------------------------------------------------------------------------------
 
 !> @file 04_abstract_parametrizations_1D.f90
 !! This file contains the abstract class for generic parametrizations for 1D functions
-!! that are used by several models in EFTCAMB. When there is a free function
-!! in EFT it should be declared as a class inheriting from parametrized_function_1D.
+!! that are used by several models in MGCAMB. When there is a free function
+!! in MG it should be declared as a class inheriting from parametrized_function_1D.
 !! This guarantees maximum performances as well as maximum flexibility.
 
 
 !----------------------------------------------------------------------------------------
 !> This module contains the abstract class for generic parametrizations for 1D functions
-!! that are used by several models in EFTCAMB. When there is a free function
-!! in EFT it should be declared as a class inheriting from parametrized_function_1D.
+!! that are used by several models in MGCAMB. When there is a free function
+!! in MG it should be declared as a class inheriting from parametrized_function_1D.
 
 !> @author Bin Hu, Marco Raveri
+!> @author Alex Zucca
 
-module EFTCAMB_abstract_parametrizations_1D
+module MGCAMB_abstract_parametrizations_1D
 
     use precision
     use AMLutils
     use IniFile
-    use EFT_def
-    use EFTCAMB_mixed_algorithms
-    use EFTCAMB_cache
+    use MG_def
+    use MGCAMB_mixed_algorithms
+    use MGCAMB_cache
 
     implicit none
 
@@ -44,7 +45,7 @@ module EFTCAMB_abstract_parametrizations_1D
 
     !----------------------------------------------------------------------------------------
     !> This is the abstract type for parametrized functions. As a rule, when there is a
-    !! free function in EFT it should be declared as a class inheriting from parametrized_function_1D.
+    !! free function in MG it should be declared as a class inheriting from parametrized_function_1D.
     !! This guarantees maximum performances as well as maximum flexibility.
     type, abstract :: parametrized_function_1D
 
@@ -69,11 +70,11 @@ module EFTCAMB_abstract_parametrizations_1D
         procedure :: parameter_names_latex => ParametrizedFunction1DParameterNamesLatex    !< subroutine that returns the i-th parameter name of the function in latex format.
         procedure( ParametrizedFunction1DParameterValues  ), deferred :: parameter_value   !< subroutine that returns the value of the function i-th parameter.
         ! evaluation procedures:
-        procedure( ParametrizedFunction1DValue            ), deferred :: value             !< function that returns the value of the function. The EFTCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
-        procedure( ParametrizedFunction1DFirstDerivative  ), deferred :: first_derivative  !< function that returns the first derivative of the function. The EFTCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
-        procedure( ParametrizedFunction1DSecondDerivative ), deferred :: second_derivative !< function that returns the second derivative of the function. The EFTCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
-        procedure( ParametrizedFunction1DThirdDerivative  ), deferred :: third_derivative  !< function that returns the third derivative of the function. The EFTCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
-        procedure( ParametrizedFunction1DIntegral         ), deferred :: integral          !< function that returns the strange integral that we need for w_DE. The EFTCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
+        procedure( ParametrizedFunction1DValue            ), deferred :: value             !< function that returns the value of the function. The MGCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
+        procedure( ParametrizedFunction1DFirstDerivative  ), deferred :: first_derivative  !< function that returns the first derivative of the function. The MGCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
+        procedure( ParametrizedFunction1DSecondDerivative ), deferred :: second_derivative !< function that returns the second derivative of the function. The MGCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
+        procedure( ParametrizedFunction1DThirdDerivative  ), deferred :: third_derivative  !< function that returns the third derivative of the function. The MGCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
+        procedure( ParametrizedFunction1DIntegral         ), deferred :: integral          !< function that returns the strange integral that we need for w_DE. The MGCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
 
     end type parametrized_function_1D
 
@@ -115,75 +116,75 @@ module EFTCAMB_abstract_parametrizations_1D
         end subroutine ParametrizedFunction1DParameterValues
 
         ! ---------------------------------------------------------------------------------------------
-        !> Function that returns the value of the function. The EFTCAMB cache is passed as an optional
+        !> Function that returns the value of the function. The MGCAMB cache is passed as an optional
         !! argument in case the parametrization uses some background quantity.
-        function ParametrizedFunction1DValue( self, x, eft_cache )
+        function ParametrizedFunction1DValue( self, x, mg_cache )
             use    precision
-            use    EFTCAMB_cache
+            use    MGCAMB_cache
             import parametrized_function_1D
             implicit none
             class(parametrized_function_1D)                    :: self      !< the base class
             real(dl), intent(in)                               :: x         !< the input scale factor
-            type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+            type(MGCAMB_timestep_cache), intent(in), optional  :: mg_cache !< the optional input MGCAMB cache
             real(dl) :: ParametrizedFunction1DValue                         !< the output value
         end function ParametrizedFunction1DValue
 
         ! ---------------------------------------------------------------------------------------------
         !> Function that returns the value of the first derivative of the function
-        !! with respect to the scale factor. The EFTCAMB cache is passed as an optional
+        !! with respect to the scale factor. The MGCAMB cache is passed as an optional
         !! argument in case the parametrization uses some background quantity.
-        function ParametrizedFunction1DFirstDerivative( self, x, eft_cache )
+        function ParametrizedFunction1DFirstDerivative( self, x, mg_cache )
             use    precision
-            use    EFTCAMB_cache
+            use    MGCAMB_cache
             import parametrized_function_1D
             implicit none
             class(parametrized_function_1D)                    :: self      !< the base class
             real(dl), intent(in)                               :: x         !< the input scale factor
-            type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+            type(MGCAMB_timestep_cache), intent(in), optional :: mg_cache !< the optional input MGCAMB cache
             real(dl) :: ParametrizedFunction1DFirstDerivative               !< the output value
         end function ParametrizedFunction1DFirstDerivative
 
         ! ---------------------------------------------------------------------------------------------
         !> Function that returns the value of the second derivative of the function
-        !! with respect to the scale factor. The EFTCAMB cache is passed as an optional
+        !! with respect to the scale factor. The MGCAMB cache is passed as an optional
         !! argument in case the parametrization uses some background quantity.
-        function ParametrizedFunction1DSecondDerivative( self, x, eft_cache )
+        function ParametrizedFunction1DSecondDerivative( self, x, mg_cache )
             use    precision
-            use    EFTCAMB_cache
+            use    MGCAMB_cache
             import parametrized_function_1D
             implicit none
             class(parametrized_function_1D)                    :: self      !< the base class
             real(dl), intent(in)                               :: x         !< the input scale factor
-            type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+            type(MGCAMB_timestep_cache), intent(in), optional :: mg_cache !< the optional input MGCAMB cache
             real(dl) :: ParametrizedFunction1DSecondDerivative              !< the output value
         end function ParametrizedFunction1DSecondDerivative
 
         ! ---------------------------------------------------------------------------------------------
         !> Function that returns the value of the third derivative of the function
-        !! with respect to the scale factor. The EFTCAMB cache is passed as an optional
+        !! with respect to the scale factor. The MGCAMB cache is passed as an optional
         !! argument in case the parametrization uses some background quantity.
-        function ParametrizedFunction1DThirdDerivative( self, x, eft_cache )
+        function ParametrizedFunction1DThirdDerivative( self, x, mg_cache )
             use    precision
-            use    EFTCAMB_cache
+            use    MGCAMB_cache
             import parametrized_function_1D
             implicit none
             class(parametrized_function_1D)                    :: self      !< the base class
             real(dl), intent(in)                               :: x         !< the input scale factor
-            type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+            type(MGCAMB_timestep_cache), intent(in), optional :: mg_cache !< the optional input MGCAMB cache
             real(dl) :: ParametrizedFunction1DThirdDerivative               !< the output value
         end function ParametrizedFunction1DThirdDerivative
 
         ! ---------------------------------------------------------------------------------------------
         !> Function that returns the integral of the function, as defined in the notes.
-        !! The EFTCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
-        function ParametrizedFunction1DIntegral( self, x, eft_cache )
+        !! The MGCAMB cache is passed as an optional argument in case the parametrization uses some background quantity.
+        function ParametrizedFunction1DIntegral( self, x, mg_cache )
             use    precision
-            use    EFTCAMB_cache
+            use    MGCAMB_cache
             import parametrized_function_1D
             implicit none
             class(parametrized_function_1D)                    :: self      !< the base class
             real(dl), intent(in)                               :: x         !< the input scale factor
-            type(EFTCAMB_timestep_cache), intent(in), optional :: eft_cache !< the optional input EFTCAMB cache
+            type(MGCAMB_timestep_cache), intent(in), optional :: mg_cache !< the optional input MGCAMB cache
             real(dl) :: ParametrizedFunction1DIntegral                      !< the output value
         end function ParametrizedFunction1DIntegral
 
@@ -257,7 +258,7 @@ contains
             write(*,*) 'Length of param_names and number of parameters do not coincide.'
             write(*,*) 'Parameter number:', num_params
             write(*,*) 'Size of the param_names array:', size(param_names)
-            call MpiStop('EFTCAMB error')
+            call MpiStop('MGCAMB error')
         end if
         if ( present(param_names_latex) ) then
             ! check length:
@@ -266,7 +267,7 @@ contains
                 write(*,*) 'Length of param_names_latex and number of parameters do not coincide.'
                 write(*,*) 'Parameter number:', self%parameter_number
                 write(*,*) 'Size of the param_names array:', size(param_names_latex)
-                call MpiStop('EFTCAMB error')
+                call MpiStop('MGCAMB error')
             end if
         end if
 
@@ -297,7 +298,7 @@ contains
         class(parametrized_function_1D)    :: self   !< the base class
         type(TIniFile)                     :: Ini    !< Input ini file
 
-        character(len=EFT_names_max_length)          :: param_name
+        character(len=MG_names_max_length)          :: param_name
         real(dl), dimension( self%parameter_number ) :: parameters
 
         integer  :: i
@@ -327,7 +328,7 @@ contains
 
         integer                             :: i
         real(dl)                            :: param_value
-        character(len=EFT_names_max_length) :: param_name
+        character(len=MG_names_max_length) :: param_name
         logical                             :: print_params_temp
 
         if ( present(print_params) ) then
@@ -364,7 +365,7 @@ contains
             write(*,*) 'In parametrized_function_1D:', self%name
             write(*,*) 'Illegal index for parameter_names.'
             write(*,*) 'Maximum value is:', self%parameter_number
-            call MpiStop('EFTCAMB error')
+            call MpiStop('MGCAMB error')
         end if
         ! return the parameter name:
         if ( allocated(self%param_names) ) then
@@ -390,7 +391,7 @@ contains
             write(*,*) 'In parametrized_function_1D:', self%name
             write(*,*) 'Illegal index for parameter_names.'
             write(*,*) 'Maximum value is:', self%parameter_number
-            call MpiStop('EFTCAMB error')
+            call MpiStop('MGCAMB error')
         end if
         ! return the parameter name:
         if ( allocated(self%param_names_latex) ) then
@@ -403,6 +404,6 @@ contains
 
     ! ---------------------------------------------------------------------------------------------
 
-end module EFTCAMB_abstract_parametrizations_1D
+end module MGCAMB_abstract_parametrizations_1D
 
 !----------------------------------------------------------------------------------------
