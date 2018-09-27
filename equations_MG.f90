@@ -1799,6 +1799,11 @@
     real(dl) ddopacity, visibility, dvisibility, ddvisibility, exptau, lenswindow
     real(dl) ISW, quadrupole_source, doppler, monopole_source, tau0
 
+    !> MGCAMB MOD START: adding some additional variables
+    real(dl) dgpnu, MG_grhonu, MG_gpinu, MG_grhonudot, MG_gpinudot, grhormass_t
+    real(dl) pidotdot, MGLensing
+    !< MGCAMB MOD END
+
     k=EV%k_buf
     k2=EV%k2_buf
 
@@ -1807,23 +1812,29 @@
 
     etak=ay(2)
 
-    !  CDM variables
+    ! CDM variables
     clxc=ay(3)
 
     !  Baryon variables
     clxb=ay(4)
     vb=ay(5)
 
-    !  Compute expansion rate from: grho 8*pi*rho*a**2
+    ! Compute expansion rate from: grho 8*pi*rho*a**2
 
     grhob_t=grhob/a
     grhoc_t=grhoc/a
     grhor_t=grhornomass/a2
     grhog_t=grhog/a2
-    if (w_lam==-1._dl) then
-        grhov_t=grhov*a2
+
+    !> MGCAMB MOD START: remove standard DE background density
+    if ( CP%MGCAMB%MGFlag == 0 ) then
+        if (w_lam==-1._dl) then
+            grhov_t=grhov*a2
+        else
+            grhov_t=grhov*a**(-1-3*w_lam)
+        end if
     else
-        grhov_t=grhov*a**(-1-3*w_lam)
+        grhov_t = 0._dl
     end if
 
     !  Get sound speed and ionisation fraction.
@@ -1843,34 +1854,111 @@
     dgq=grhob_t*vb
 
     if (CP%Num_Nu_Massive > 0) then
-        call MassiveNuVars(EV,ay,a,grhonu_t,gpres_nu,dgrho_matter,dgq, wnu_arr)
+        !> MGCAMB MOD START: compatibility with massive neutrinos
+        !call MassiveNuVars(EV,ay,a,grhonu_t,gpres_nu,dgrho_matter,dgq, wnu_arr)    !< original code
+        call MassiveNuVars(EV,ay,a,grhonu_t,gpres_nu,dgrho_matter,dgq, wnu_arr, dgp = dgpnu )
+        !< MGCAMB MOD END
     end if
 
     grho_matter=grhonu_t+grhob_t+grhoc_t
     grho = grho_matter+grhor_t+grhog_t+grhov_t
 
-    if (CP%flat) then
-        adotoa=sqrt(grho/3)
+    !> MGCAMB MOD START: background computation (if the background is modified)
+    if ( CP%MGCAMB%MGFlag==0 ) then
+        if (CP%flat) then
+            adotoa=sqrt(grho/3)
+            cothxor=1._dl/tau
+        else
+            adotoa=sqrt((grho+grhok)/3._dl)
+            cothxor=1._dl/tanfunc(tau/CP%r)/CP%r
+        end if
+    else if ( CP%MGCAMB%MGFlag /= 0 ) then
+        gpres = gpres +(grhog_t +grhor_t)/3._dl
+        ! start to fill the cache:
+        EV%mg_cache%a           = a
+        EV%mg_cache%tau         = tau
+        EV%mg_cache%k           = k
+        EV%mg_cache%grhom_t     = grho
+        EV%mg_cache%gpresm_t    = gpres
+        EV%mg_cache%grhob_t     = grhob_t
+        EV%mg_cache%grhoc_t     = grhoc_t
+        EV%mg_cache%grhor_t     = grhor_t
+        EV%mg_cache%grhog_t     = grhog_t
+
+        ! compute the Hubble parameter
+        call CP%MGCAMB%model%compute_adotoa( a, CP%mg_par_cache , EV%mg_cache )
+
+        ! store adotoa:
+        adotoa   = EV%mg_cache%adotoa
+
+        ! compute massive neutrinos stuff:
+        ! Massive neutrinos mod:
+        if ( CP%Num_Nu_Massive /= 0 ) then
+            EV%mg_cache%grhonu_tot    = 0._dl
+            EV%mg_cache%gpinu_tot     = 0._dl
+            EV%mg_cache%grhonudot_tot = 0._dl
+            EV%mg_cache%gpinudot_tot  = 0._dl
+            do nu_i = 1, CP%Nu_mass_eigenstates
+                MG_grhonu    = 0._dl
+                MG_gpinu     = 0._dl
+                MG_grhonudot = 0._dl
+                MG_gpinudot  = 0._dl
+                grhormass_t=grhormass(nu_i)/a**2
+
+                call Nu_background(a*nu_masses(nu_i),MG_grhonu,MG_gpinu)
+
+                EV%mg_cache%grhonu_tot = EV%mg_cache%grhonu_tot + grhormass_t*MG_grhonu
+                EV%mg_cache%gpinu_tot  = EV%mg_cache%gpinu_tot  + grhormass_t*MG_gpinu
+                EV%mg_cache%grhonudot_tot = EV%mg_cache%grhonudot_tot + grhormass_t*(Nu_drho(a*nu_masses(nu_i) ,adotoa, MG_grhonu)&
+                    & -4._dl*adotoa*MG_grhonu)
+                EV%mg_cache%gpinudot_tot  = EV%mg_cache%gpinudot_tot  + grhormass_t*(Nu_pidot(a*nu_masses(nu_i),adotoa, MG_gpinu )&
+                    & -4._dl*adotoa*MG_gpinu)
+            end do
+        end if
+        ! compute pressure dot:
+        EV%mg_cache%gpresdotm_t = -4._dl*adotoa*( grhog_t+grhor_t )/3._dl +EV%mg_cache%gpinudot_tot
+        ! compute remaining quantities related to H:
+        call CP%MGCAMB%model%compute_H_derivs( a, CP%mg_par_cache , EV%mg_cache )
+        ! store:
+        adotdota = EV%mg_cache%Hdot +EV%mg_cache%adotoa**2
+
         cothxor=1._dl/tau
-    else
-        adotoa=sqrt((grho+grhok)/3._dl)
-        cothxor=1._dl/tanfunc(tau/CP%r)/CP%r
+
     end if
+    !< MGCAMB MOD END
 
     dgrho = dgrho_matter
 
-    if (w_lam /= -1 .and. w_Perturb) then
-        clxde=ay(EV%w_ix)
-        qde=ay(EV%w_ix+1)*(1+w_lam)
-        dgrho=dgrho + clxde*grhov_t
-        dgq = dgq + qde*grhov_t
+    !> MGCAMB MOD START: perturbations to DE density. We need to talk about this
+    if ( CP%MGCAMB%MGFlag == 0 ) then
+        if (w_lam /= -1 .and. w_Perturb) then
+            clxde=ay(EV%w_ix)
+            qde=ay(EV%w_ix+1)*(1+w_lam)
+            dgrho=dgrho + clxde*grhov_t
+            dgq = dgq + qde*grhov_t
+        end if
+    else if ( CP%MGCAMB%MGFlag /=0 .and. EV%MGCAMBactive ) then
+        call CP%MGCAMB%model%compute_Einstein_Factors( a, CP%mg_par_cache, EV%mg_cache )
     end if
+    !< MGCAMB MOD END
 
-    if (EV%no_nu_multpoles) then
+    !> MGCAMB MOD START: RSA approximation
+    if ( CP%MGCAMB%MGFlag == 0 .or. .not. EV%MGCAMBactive ) then
         !RSA approximation of arXiv:1104.2933, dropping opactity terms in the velocity
         !Approximate total density variables with just matter terms
         z=(0.5_dl*dgrho/k + etak)/adotoa
         dz= -adotoa*z - 0.5_dl*dgrho/k
+    else if ( CP%MGCAMB%MGFlag /= 0 ) then
+        ! still need to calculate this
+
+    end if
+    !< MGCAMB MOD END
+
+    if (EV%no_nu_multpoles) then
+        !RSA approximation of arXiv:1104.2933, dropping opactity terms in the velocity
+        !Approximate total density variables with just matter terms
+        !z=(0.5_dl*dgrho/k + etak)/adotoa
+        !dz= -adotoa*z - 0.5_dl*dgrho/k
         clxr=-4*dz/k
         qr=-4._dl/3*z
         pir=0
@@ -1883,8 +1971,8 @@
 
     if (EV%no_phot_multpoles) then
         if (.not. EV%no_nu_multpoles) then
-            z=(0.5_dl*dgrho/k + etak)/adotoa
-            dz= -adotoa*z - 0.5_dl*dgrho/k
+            !z=(0.5_dl*dgrho/k + etak)/adotoa
+            !dz= -adotoa*z - 0.5_dl*dgrho/k
             clxg=-4*dz/k-4/k*opacity*(vb+z)
             qg=-4._dl/3*z
         else
@@ -1911,18 +1999,23 @@
 
     ayprime(1)=adotoa*a
 
+    !> MGCAMB MOD START:  equation of motion, here we use the non-RSA version of z and dz
+    if ( CP%MGCAMB%MGFlag == 0 .or. .not. EV%MGCAMBactive ) then
+        !  Get sigma (shear) and z from the constraints
+        ! have to get z from eta for numerical stability
+        z=(0.5_dl*dgrho/k + etak)/adotoa
+        if (CP%flat) then
+            !eta*k equation
+            sigma=(z+1.5_dl*dgq/k2)
+            ayprime(2)=0.5_dl*dgq
+        else
+            sigma=(z+1.5_dl*dgq/k2)/EV%Kf(1)
+            ayprime(2)=0.5_dl*dgq + CP%curv*z
+        end if
+    else if ( CP%MGCAMB%MGFlag /= 0 ) then
 
-    !  Get sigma (shear) and z from the constraints
-    ! have to get z from eta for numerical stability
-    z=(0.5_dl*dgrho/k + etak)/adotoa
-    if (CP%flat) then
-        !eta*k equation
-        sigma=(z+1.5_dl*dgq/k2)
-        ayprime(2)=0.5_dl*dgq
-    else
-        sigma=(z+1.5_dl*dgq/k2)/EV%Kf(1)
-        ayprime(2)=0.5_dl*dgq + CP%curv*z
     end if
+    !< MGCAMB MOD END
 
     if (w_lam /= -1 .and. w_Perturb) then
         ayprime(EV%w_ix)= -3*adotoa*(cs2_lam-w_lam)*(clxde+3*adotoa*qde/k) &
