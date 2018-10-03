@@ -2012,7 +2012,8 @@
             sigma=(z+1.5_dl*dgq/k2)/EV%Kf(1)
             ayprime(2)=0.5_dl*dgq + CP%curv*z
         end if
-    else if ( CP%MGCAMB%MGFlag /= 0 ) then
+    else if ( CP%MGCAMB%MGFlag /= 0 .and. EV%MGCAMBactive ) then
+        !> we still need to add this
 
     end if
     !< MGCAMB MOD END
@@ -2241,6 +2242,7 @@
         end if
     end if
 
+    !> MGCAMB MOD START: the output part has been moved here
     if (associated(EV%OutputTransfer) .or. associated(EV%OutputSources)) then
         if (EV%TightCoupling .or. EV%no_phot_multpoles) then
             E=0
