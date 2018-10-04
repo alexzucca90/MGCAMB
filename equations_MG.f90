@@ -1997,6 +1997,8 @@
     photbar=grhog_t/grhob_t
     pb43=4._dl/3*photbar
 
+
+
     ayprime(1)=adotoa*a
 
     !> MGCAMB MOD START:  equation of motion, here we use the non-RSA version of z and dz
@@ -2013,7 +2015,79 @@
             ayprime(2)=0.5_dl*dgq + CP%curv*z
         end if
     else if ( CP%MGCAMB%MGFlag /= 0 .and. EV%MGCAMBactive ) then
-        !> we still need to add this
+
+        !> setting the cache variables
+        !> density perturbations
+        EV%mg_cache%clxc    = clxc
+        EV%mg_cache%clxb    = clxb
+        EV%mg_cache%clxg    = clxg
+        EV%mg_cache%clxr    = clxr
+        !EV%mg_cache%clxcnu  = clxnu
+
+        !> fluxes and velocities
+        EV%mg_cache%vb      = vb
+        EV%mg_cache%qg      = qg
+        EV%mg_cache%qr      = qr
+        !EV%mg_cache%qnu     = qnu
+
+        !> anisotropic stresses
+
+        EV%mg_cache%pig     = pig
+        EV%mg_cache%pir     = pir
+
+        !> here we can get clxnu and dgpi, while pinudot requires knowing ayprime, which needs z
+        !>  variables name
+        !    MassiveNuVarsOut( EV, y,  yprime,  a, grho, gpres,dgrho,dgq,dgpi, dgpi_diff,pidot_sum,clxnu_all)
+        call MassiveNuVarsOut( EV, ay, ayprime, a, grho=EV%mg_cache%grhonu, gpres=EV%mg_cache%gpresnu, &
+                                dgrho=EV%mg_cache%dgrhonu, dgq=EV%mg_cache%dgqnu, dgpi=EV%mg_cache% )
+
+        !> first Get sigma and then Z
+        call CP%MGCAMB%model%compute_sigma( a, CP%mg_par_cache, EV%mg_cache )
+        sigma = EV&mg_cache%sigma
+
+        !> computing the pi_dot quantities
+        !> massless neutrinos
+        if (EV%no_nu_multpoles) then
+            pirdot = 0.d0
+        else
+            ix = EV%r_ix+3
+            if (EV%lmaxnr>2) then
+                pirdot=EV%denlk(2)*qr- EV%denlk2(2)*ay(ix)+8._dl/15._dl*k*sigma
+            else
+                pirdot=EV%denlk(2)*qr +8._dl/15._dl*k*sigma
+            end if
+        end if
+
+        !> photons contributions
+        if (EV%no_phot_multpoles) then
+            pigdot = 0.d0
+        else
+
+            if (EV%tightcoupling) then
+                pigdot = 0.d0 !
+
+                !> AZ: the second order tight coupling is quite hard to obtain as it depends on the variable Z, that we need to calculate.
+            else
+                !> the term E2 was missing.
+                E2=ay(EV%polind+2)
+                polter = pig/10+9._dl/15*E2
+
+                ix= EV%g_ix+2
+                if (EV%lmaxg>2) then
+                    pigdot=EV%denlk(2)*qg-EV%denlk2(2)*ay(ix+1)-opacity*(pig - polter) &
+                    +8._dl/15._dl*k*sigma
+
+                else !closed case
+                    pigdot=EV%denlk(2)*qg-opacity*(pig - polter) +8._dl/15._dl*k*sigma
+                end if
+            end if
+
+        end if !no_phot_multpoles
+
+        !> massive neutrinos contributions.
+
+        call CP%MGCAMB%model%compute_z( a, CP%mg_par_cache, EV%mg_cache )
+        z = EV&mg_cache%z
 
     end if
     !< MGCAMB MOD END
@@ -2304,8 +2378,12 @@
             EV%OutputTransfer(Transfer_tot) =  dgrho_matter/grho_matter !includes neutrinos
             EV%OutputTransfer(Transfer_nonu) = (grhob_t*clxb+grhoc_t*clxc)/(grhob_t + grhoc_t)
             EV%OutputTransfer(Transfer_tot_de) =  dgrho/grho_matter
+
             !Transfer_Weyl is k^2Phi, where Phi is the Weyl potential
+            !> MGCAMB MOD START: modifying the Weyl potential calculation
             EV%OutputTransfer(Transfer_Weyl) = k2*phi
+            !< MGCAMB MOD END
+
             EV%OutputTransfer(Transfer_Newt_vel_cdm)=  -k*sigma/adotoa
             EV%OutputTransfer(Transfer_Newt_vel_baryon) = -k*(vb + sigma)/adotoa
             EV%OutputTransfer(Transfer_vel_baryon_cdm) = vb
