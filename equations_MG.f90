@@ -2041,7 +2041,7 @@
         call MassiveNuVarsOut( EV, ay, ayprime, a, grho=EV%mg_cache%grhonu, gpres=EV%mg_cache%gpresnu, &
                                 dgrho=EV%mg_cache%dgrhonu, dgq=EV%mg_cache%dgqnu, dgpi=EV%mg_cache% )
 
-        !> first Get sigma and then Z
+        !> first Get sigma
         call CP%MGCAMB%model%compute_sigma( a, CP%mg_par_cache, EV%mg_cache )
         sigma = EV&mg_cache%sigma
 
@@ -2084,8 +2084,86 @@
 
         end if !no_phot_multpoles
 
-        !> massive neutrinos contributions.
+        !> start summing pidot
+        pidot_sum = 0.d0
+        pidot_sum = grhog_t*pigdot+grhor_t*pirdot
 
+        !> massive neutrinos contributions.
+        if (CP%Num_Nu_massive >0) then
+
+            !DIR$ LOOP COUNT MIN(1), AVG(1)
+            do nu_i = 1, CP%Nu_mass_eigenstates
+
+                if (EV%MassiveNuApprox(nu_i)) then
+                    !Now EV%iq0 = clx, EV%iq0+1 = clxp, EV%iq0+2 = G_1, EV%iq0+3=G_2=pinu
+                    !see astro-ph/0203507
+                    G11_t=EV%G11(nu_i)/a/a2
+                    G30_t=EV%G30(nu_i)/a/a2
+                    off_ix = EV%nu_ix(nu_i)
+                    w=wnu_arr(nu_i)
+
+                    !  don't need to get the lower moments, only the relevant for pinudot
+                    !  also, z has yet to be calculated
+                    !ayprime(off_ix)=-k*z*(w+1) + 3*adotoa*(w*ay(off_ix) - ay(off_ix+1))-k*ay(off_ix+2)
+                    !ayprime(off_ix+1)=(3*w-2)*adotoa*ay(off_ix+1) - 5._dl/3*k*z*w - k/3*G11_t
+                    ayprime(off_ix+2)=(3*w-1)*adotoa*ay(off_ix+2) - k*(2._dl/3*EV%Kf(1)*ay(off_ix+3)-ay(off_ix+1))
+                    ayprime(off_ix+3)=(3*w-2)*adotoa*ay(off_ix+3) + 2*w*k*sigma - k/5*(3*EV%Kf(2)*G30_t-2*G11_t)
+
+                else
+                    ind=EV%nu_ix(nu_i)
+                    !DIR$ LOOP COUNT MIN(3), AVG(3)
+                    do i=1,EV%nq(nu_i)
+                        q=nu_q(i)
+                        aq=a*nu_masses(nu_i)/q
+                        v=1._dl/sqrt(1._dl+aq*aq)
+
+                        !> Z has yet to be calculated
+                        !ayprime(ind)=-k*(4._dl/3._dl*z + v*ay(ind+1))
+                        ind=ind+1
+                        ayprime(ind)=v*(EV%denlk(1)*ay(ind-1)-EV%denlk2(1)*ay(ind+1))
+                        ind=ind+1
+                        if (EV%lmaxnu_tau(nu_i)==2) then
+                            ayprime(ind)=-ayprime(ind-2) -3*cothxor*ay(ind)
+                        else
+                            ayprime(ind)=v*(EV%denlk(2)*ay(ind-1)-EV%denlk2(2)*ay(ind+1)) &
+                            +k*8._dl/15._dl*sigma
+                            do l=3,EV%lmaxnu_tau(nu_i)-1
+                                ind=ind+1
+                                ayprime(ind)=v*(EV%denlk(l)*ay(ind-1)-EV%denlk2(l)*ay(ind+1))
+                            end do
+                            !  Truncate moment expansion.
+                            ind = ind+1
+                            ayprime(ind)=k*v*ay(ind-1)-(EV%lmaxnu_tau(nu_i)+1)*cothxor*ay(ind)
+                        end if
+                        ind = ind+1
+                    end do
+                end if
+            end do
+
+            if (EV%has_nu_relativistic) then
+                ind=EV%nu_pert_ix
+                ayprime(ind)=+k*a2*qr -k*ay(ind+1)
+                ind2= EV%r_ix
+                do l=1,EV%lmaxnu_pert-1
+                    ind=ind+1
+                    ind2=ind2+1
+                    ayprime(ind)= -a2*(EV%denlk(l)*ay(ind2-1)-EV%denlk2(l)*ay(ind2+1)) &
+                                 +   (EV%denlk(l)*ay(ind-1)-EV%denlk2(l)*ay(ind+1))
+                end do
+                ind=ind+1
+                ind2=ind2+1
+                ayprime(ind)= k*(ay(ind-1) -a2*ay(ind2-1)) -(EV%lmaxnu_pert+1)*cothxor*ay(ind)
+            end if
+
+            !> after setting the Boltzmann hierarchy, compute pinudot (here pinudot = grhonu*pinudot)
+            call MassiveNuVarsOut(EV, ay, ayprime, a, pidot_sum=pidot_sum)
+
+        end if
+
+        ! caching pidot_sum
+        EV%mg_cache%pidot_sum = pidot_sum
+
+        ! now we can get Z
         call CP%MGCAMB%model%compute_z( a, CP%mg_par_cache, EV%mg_cache )
         z = EV&mg_cache%z
 
