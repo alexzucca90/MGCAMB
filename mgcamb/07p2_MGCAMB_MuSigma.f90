@@ -55,8 +55,6 @@ contains
 
         ! read model selection flags:
         self%MGCAMBMuGammaModel = Ini_Read_Int_File( Ini, 'model'  , 0 )
-!> models ::
-! 1: 
 
     end subroutine MGCAMBMuGammaReadModelSelectionFromFile
 
@@ -70,9 +68,6 @@ contains
         class( MGCAMB_model_MuGamma )                       :: self              !< the base class
 
     ! allocate Mu and Gamma according to the model
-    if ( allocated(self%MGCAMBMuGamma_Mu ) )    deallocate( self%MGCAMBMuGamma_Mu )
-    if ( allocated(self%MGCAMBMuGamma_Gamma ) ) deallocate( self%MGCAMBMuGamma_Gamma )
-
     if ( allocated(self%PureEFTOmega) ) deallocate(self%PureEFTOmega)
     select case ( self%PureEFTmodelOmega )
     case(0)

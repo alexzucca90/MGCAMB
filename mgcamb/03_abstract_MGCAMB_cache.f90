@@ -188,6 +188,7 @@ module MGCAMB_cache
         real(dl) :: gpinu_tot     !< the value of \f$ \sum_\nu P_{m\nu} a^2 / m_0^2 \f$
         real(dl) :: grhonudot_tot !< the value of \f$ \sum_\nu \dot{\rho}_{m\nu} a^2 / m_0^2 \f$
         real(dl) :: gpinudot_tot  !< the value of \f$ \sum_\nu \dot{P}_{m\nu} a^2 / m_0^2 \f$
+
         ! 4) expansion history:
         real(dl) :: adotoa        !< the value of \f$ \mathcal{H} \f$ at the given scale factor.
         real(dl) :: Hdot          !< the value of \f$ d\mathcal{H} /d \tau \f$ at the given scale factor.
@@ -209,43 +210,27 @@ module MGCAMB_cache
         real(dl) :: MGRP        !< the value of the derivative w.r.t the scale factor of R(a,k)
         real(dl) :: MGRPP       !< the value of the second derivative w.r.t the scale factor of R(a,k)
 
-        ! 6) other background quantities:
-        !real(dl) :: grhoq         !< the value of the effective density of the Q field. Refer to the Numerical Notes for the definition.
-        !real(dl) :: gpresq        !< the value of the effective pressure of the Q field. Refer to the Numerical Notes for the definition.
-        !real(dl) :: grhodotq      !< the value of the time derivative of the effective density of the Q field. Refer to the Numerical Notes for the definition.
-        !real(dl) :: gpresdotq     !< the value of the time derivative of the effective pressure of the Q field. Refer to the Numerical Notes for the definition.
-        ! 7) the Einstein equations coefficients:
-        !real(dl) :: MGeomF       !< the value of the Einstein equations coefficient F. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomN       !< the value of the Einstein equations coefficient N. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomNdot    !< the value of the Einstein equations coefficient dN/dtau. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomX       !< the value of the Einstein equations coefficient X. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomXdot    !< the value of the Einstein equations coefficient dX/dtau. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomY       !< the value of the Einstein equations coefficient Y. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomG       !< the value of the Einstein equations coefficient G. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomU       !< the value of the Einstein equations coefficient U. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomL       !< the value of the Einstein equations coefficient L. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomM       !< the value of the Einstein equations coefficient M. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomV       !< the value of the Einstein equations coefficient V. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomVdot    !< the value of the Einstein equations coefficient dV/dtau. Refer to the Numerical Notes for the definition.
-        !real(dl) :: MGeomQ       !< the value of the Einstein equations coefficient Q. Refer to the Numerical Notes for the definition.\
 
         ! 8) scalar perturbations quantities:
-        real(dl) :: z             !< Syncronous gauge Z perturbation.
-        real(dl) :: dz            !< Syncronous gauge dot Z perturbation. This is used to store the non-RSA result.
-        real(dl) :: sigma         !< Syncronous gauge sigma perturbation. This is used to store the non-RSA result.
-        real(dl) :: sigmadot      !< Syncronous gauge dot sigma perturbation. This is used to store the non-RSA result.
-        real(dl) :: clxc          !< Syncronous gauge cdm density perturbation.
-        real(dl) :: clxb          !< Syncronous gauge baryon density perturbation.
-        real(dl) :: clxg          !< Syncronous gauge radiation density perturbation.
-        real(dl) :: clxr          !< Syncronous gauge massless neutrinos density perturbation.
-        real(dl) :: vb            !< Syncronous gauge baryon velocity.
-        real(dl) :: dgpnu         !< Syncronous gauge massive neutrinos pressure perturbation.
-        real(dl) :: dgrho         !< Syncronous gauge total density perturbation.
-        real(dl) :: dgq           !< Syncronous gauge total velocity perturbation.
-        ! 9) tensor perturbations quantities:
-        real(dl) :: MGAT          !< the value of the tensor equation coefficient A. Refer to the Numerical Notes for the definition.
-        real(dl) :: MGBT          !< the value of the tensor equation coefficient B. Refer to the Numerical Notes for the definition.
-        real(dl) :: MGDT          !< the value of the tensor equation coefficient D. Refer to the Numerical Notes for the definition.
+        real(dl) :: z               !< Syncronous gauge Z perturbation.
+        real(dl) :: dz              !< Syncronous gauge dot Z perturbation. This is used to store the non-RSA result.
+        real(dl) :: sigma           !< Syncronous gauge sigma perturbation. This is used to store the non-RSA result.
+        real(dl) :: sigmadot        !< Syncronous gauge dot sigma perturbation. This is used to store the non-RSA result.
+        real(dl) :: clxc            !< Syncronous gauge cdm density perturbation.
+        real(dl) :: clxb            !< Syncronous gauge baryon density perturbation.
+        real(dl) :: clxg            !< Syncronous gauge radiation density perturbation.
+        real(dl) :: clxr            !< Syncronous gauge massless neutrinos density perturbation.
+        real(dl) :: vb              !< Syncronous gauge baryon velocity.
+        real(dl) :: qg              !< Syncronous gauge photons flux
+        real(dl) :: qr              !< Syncronous gauge massless neutrinos flux
+        real(dl) :: dgpnu           !< Syncronous gauge massive neutrinos pressure perturbation.
+        real(dl) :: dgrho           !< Syncronous gauge total density perturbation.
+        real(dl) :: dgq             !< Syncronous gauge total velocity perturbation.
+        real(dl) :: dgrhonu         !< Syncronous gauge massive neutrinos total density perturbation
+        real(dl) :: dgqnu           !< Syncronous gauge massive neutrinos total flux
+        real(dl) :: dgpi            !< Syncronous gauge total anisotropic stress
+        real(dl) :: pidot_sum       !< Syncronous gauge total anisotropic stress time-derivative
+
         ! 10) other quantities useful for debug purposes:
         real(dl) :: MGISW         !< Source for ISW effect.
         real(dl) :: MGLensing     !< Source for lensing effect.
@@ -313,25 +298,7 @@ contains
         self%MGRV           = 0._dl
         selff%MGRP          = 0._dl
         self%MGRPP          = 0._dl
-        ! 6) other background quantities:
-        !self%grhoq         = 0._dl
-        !self%gpresq        = 0._dl
-        !self%grhodotq      = 0._dl
-        !self%gpresdotq     = 0._dl
-        ! 7) the Einstein equations coefficients:
-        !self%MGeomF       = 0._dl
-        !self%MGeomN       = 0._dl
-        !self%MGeomNdot    = 0._dl
-        !self%MGeomX       = 0._dl
-        !self%MGeomXdot    = 0._dl
-        !self%MGeomY       = 0._dl
-        !self%MGeomG       = 0._dl
-        !self%MGeomU       = 0._dl
-        !self%MGeomL       = 0._dl
-        !self%MGeomM       = 0._dl
-        !self%MGeomV       = 0._dl
-        !self%MGeomVdot    = 0._dl
-        !self%MGeomQ       = 0._dl
+
         ! 10) perturbations quantities:
         self%z             = 0._dl
         self%dz            = 0._dl
@@ -342,9 +309,15 @@ contains
         self%clxg          = 0._dl
         self%clxr          = 0._dl
         self%vb            = 0._dl
+        self%qg            = 0._dl
+        self%qr            = 0._dl
         self%dgpnu         = 0._dl
         self%dgrho         = 0._dl
         self%dgq           = 0._dl
+        self%dgrhonu       = 0._dl
+        self%dgqnu         = 0._dl
+        self%dgpi          = 0._dl
+        self%pidot_sum     = 0._dl
         ! 11) tensor perturbations quantities:
         self%MGAT         = 0._dl
         self%MGBT         = 0._dl
@@ -366,8 +339,8 @@ contains
 
         implicit none
 
-        class(MGCAMB_timestep_cache), intent(in)  :: self    !< The base class.
-        logical, intent(out)                       :: HaveNan !< Logical variable which describes the presence of a Nan variable.
+        class(MGCAMB_timestep_cache), intent(in)    :: self    !< The base class.
+        logical, intent(out)                        :: HaveNan !< Logical variable which describes the presence of a Nan variable.
                                                               !< If an element of the MGCAMB_timestep_cache is Nan, you get HaveNan=.True.
 
         HaveNan = .False.
@@ -406,25 +379,6 @@ contains
         HaveNan = HaveNan.or.IsNaN(self%MGRP)
         HaveNan = HaveNan.or.IsNaN(self%MGRPP)
 
-        !> other quantities
-        !HaveNan = HaveNan.or.IsNaN(self%grhoq)
-        !HaveNan = HaveNan.or.IsNaN(self%gpresq)
-        !HaveNan = HaveNan.or.IsNaN(self%grhodotq)
-        !HaveNan = HaveNan.or.IsNaN(self%gpresdotq)
-
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomF)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomN)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomNdot)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomX)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomXdot)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomY)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomG)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomU)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomL)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomM)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomV)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomVdot)
-        !HaveNan = HaveNan.or.IsNaN(self%MGeomQ)
         !> perturbation quantities
         HaveNan = HaveNan.or.IsNaN(self%z)
         HaveNan = HaveNan.or.IsNaN(self%dz)
@@ -435,14 +389,16 @@ contains
         HaveNan = HaveNan.or.IsNaN(self%clxg)
         HaveNan = HaveNan.or.IsNaN(self%clxr)
         HaveNan = HaveNan.or.IsNaN(self%vb)
+        HaveNan = HaveNan.or.IsNaN(self%qg)
+        HaveNan = HaveNan.or.IsNaN(self%qr)
         HaveNan = HaveNan.or.IsNaN(self%dgpnu)
         HaveNan = HaveNan.or.IsNaN(self%dgrho)
         HaveNan = HaveNan.or.IsNaN(self%dgq)
+        HaveNan = HaveNan.or.IsNaN(self%dgrhonu)
+        HaveNan = HaveNan.or.IsNaN(self%dgqnu)
+        HaveNan = HaveNan.or.IsNaN(self%dgpi)
+        HaveNan = HaveNan.or.IsNaN(self%pidot_sum)
 
-        !> Tensor perturbations
-        !HaveNan = HaveNan.or.IsNaN(self%MGAT)
-        !HaveNan = HaveNan.or.IsNaN(self%MGBT)
-        !HaveNan = HaveNan.or.IsNaN(self%MGDT)
 
         !> Debug quantities
         HaveNan = HaveNan.or.IsNaN(self%MGISW)
@@ -461,8 +417,8 @@ contains
 
         implicit none
 
-        class(MGCAMB_timestep_cache)  :: self    !< the base class.
-        character(len=*), intent(in)   :: outroot !< output root of the file.
+        class(MGCAMB_timestep_cache)    :: self    !< the base class.
+        character(len=*), intent(in)    :: outroot !< output root of the file.
 
         logical :: is_open
 
@@ -478,15 +434,9 @@ contains
         call test_open( 333  )
         call test_open( 444  )
         call test_open( 555  )
-        call test_open( 666  )
-        call test_open( 777  )
-        call test_open( 888  )
-        call test_open( 999  )
         call test_open( 1111 )
         call test_open( 2222 )
         call test_open( 3333 )
-        call test_open( 4444 )
-        call test_open( 5555 )
 
         ! open the files:
         call CreateTxtFile( TRIM(outroot)//'cache_FRW.dat'           ,111 )
@@ -494,12 +444,9 @@ contains
         call CreateTxtFile( TRIM(outroot)//'cache_BPres.dat'         ,333 )
         call CreateTxtFile( TRIM(outroot)//'cache_BOmegas.dat'       ,444 )
         call CreateTxtFile( TRIM(outroot)//'cache_BackgroundMG.dat'  ,555 )
-        !call CreateTxtFile( TRIM(outroot)//'cache_BackgroundQ.dat'   ,777 )
-        !call CreateTxtFile( TRIM(outroot)//'cache_EinsteinCoeff.dat' ,888 )
-        call CreateTxtFile( TRIM(outroot)//'cache_EinsteinSol.dat'   ,2222)
-        call CreateTxtFile( TRIM(outroot)//'cache_TensorCoeff.dat'   ,3333)
-        call CreateTxtFile( TRIM(outroot)//'cache_Sources.dat'       ,4444)
-        call CreateTxtFile( TRIM(outroot)//'cache_MetricMG.dat'      ,5555)
+        call CreateTxtFile( TRIM(outroot)//'cache_EinsteinSol.dat'   ,1111)
+        call CreateTxtFile( TRIM(outroot)//'cache_Sources.dat'       ,2222)
+        call CreateTxtFile( TRIM(outroot)//'cache_MetricMG.dat'      ,3333)
 
         ! write the headers:
         write (111 ,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'adotoa ', 'Hdot ', 'Hdotdot '
@@ -507,12 +454,10 @@ contains
         write (333 ,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'gpresm_t ', 'gpresdotm_t ', 'gpiv_t ', 'gpinu_tot ', 'gpinudot_tot '
         write (444 ,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'omegam ', 'omegab ', 'omegac ', 'omegar ', 'omegag ', 'omegav ', 'omeganu_tot '
         write (555 ,'(20a)')  '# ', 'a ', 'tau ', 'k ', 'MGMuV', 'MGMuP', 'MGMuPP', 'MGGammaV', 'MGGammaP', 'MGGammaPP', 'MGQV', 'MGQP','MGQPP', 'MGRV', 'MGRP', 'MGRPP'
-        !write (777 ,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'grhoq ', 'gpresq ', 'grhodotq ', 'gpresdotq '
-        !write (888 ,'(18a)')  '# ', 'a ', 'tau ', 'k ', 'MGeomF ', 'MGeomN ', 'MGeomNdot ', 'MGeomX ', 'MGeomXdot ', 'MGeomY ', 'MGeomG ', 'MGeomU ', 'MGeomL ', 'MGeomM ', 'MGeomV ', 'MGeomVdot ', 'MGeomQ'
-        write (2222,'(20a)')  '# ', 'a ', 'tau ', 'k ', 'z ', 'sigma', 'clxc ', 'clxb ', 'clxg ', 'clxr ', 'vb ', 'dgpnu ', 'dgrho ', 'dgq '
-        write (3333,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'MGAT ', 'MGBT ', 'MGDT '
-        write (4444,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'MGISW ', 'MGLensing ', 'CMBTSource '
-        write (5555,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'Psi ', 'Phi ', 'mu ', 'gamma '
+        write (1111,'(20a)')  '# ', 'a ', 'tau ', 'k ', 'z ', 'sigma', 'clxc ', 'clxb ', 'clxg ', 'clxr ', 'vb ', 'qg ', 'qr ', 'dgpnu ', 'dgrho ', 'dgq ', 'dgrhonu ', &
+                                & 'dgqnu ', 'dgpi ', 'pidot_sum '
+        write (2222,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'MGISW ', 'MGLensing ', 'CMBTSource '
+        write (3333,'(12a)')  '# ', 'a ', 'tau ', 'k ', 'Psi ', 'Phi ', 'mu ', 'gamma '
 
     contains
 
@@ -549,15 +494,9 @@ contains
         call test_close( 333  )
         call test_close( 444  )
         call test_close( 555  )
-        call test_close( 666  )
-        call test_close( 777  )
-        call test_close( 888  )
-        call test_close( 999  )
         call test_close( 1111 )
         call test_close( 2222 )
         call test_close( 3333 )
-        call test_close( 4444 )
-        call test_close( 5555 )
 
         ! close the files:
         close( 111  )
@@ -565,15 +504,9 @@ contains
         close( 333  )
         close( 444  )
         close( 555  )
-        close( 666  )
-        close( 777  )
-        close( 888  )
-        close( 999  )
         close( 1111 )
         close( 2222 )
         close( 3333 )
-        close( 4444 )
-        close( 5555 )
 
         ! print some feedback:
         write(*,'(a)') "***************************************************************"
@@ -620,13 +553,12 @@ contains
         ! write background MG functions:
         write (555 ,'(14'//cache_output_format//')')  self%a, self%tau, self%k, self%MGMuV, self%MGMuP, self%MGMuPP, self%MGGammaV, self%MGGammaP, self%MGGammaPP, self%MGQV, self%MGQP, self%MGQPP, self%MGRV, self%MGRP, self%MGRPP
         ! write some perturbations:
-        write (2222,'(20'//cache_output_format//')')  self%a, self%tau, self%k, self%z, self%sigma, self%clxc, self%clxb, self%clxg, self%clxr, self%dgpnu, self%dgrho, self%dgq
-        ! write tensor coefficients:
-        write (3333,'(12'//cache_output_format//')')  self%a, self%tau, self%k, self%MGAT, self%MGBT, self%MGDT
+        write (1111,'(20'//cache_output_format//')')  self%a, self%tau, self%k, self%z, self%sigma, self%clxc, self%clxb, self%clxg, self%clxr, self%vb, self%qg, self%qr,  self%dgpnu, self%dgrho, self%dgq &
+                                                    & self%=dgrhonu, self%dgqnu, self%dgpi, self%pidot_sum
         ! write sources:
-        write (4444,'(12'//cache_output_format//')')  self%a, self%tau, self%k, self%MGISW, self%MGLensing, self%CMBTSource
+        write (2222,'(12'//cache_output_format//')')  self%a, self%tau, self%k, self%MGISW, self%MGLensing, self%CMBTSource
         ! write metric potentials:
-        write (5555,'(12'//cache_output_format//')')  self%a, self%tau, self%k, self%Psi, self%Phi, self%mu, self%gamma
+        write (3333,'(12'//cache_output_format//')')  self%a, self%tau, self%k, self%Psi, self%Phi, self%mu, self%gamma
 
     end subroutine MGCAMBTimestepCacheDumpFile
 

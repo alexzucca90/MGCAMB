@@ -1938,6 +1938,7 @@
             dgq = dgq + qde*grhov_t
         end if
     else if ( CP%MGCAMB%MGFlag /=0 .and. EV%MGCAMBactive ) then
+        ! There are no DE perturbations in MGCAMB, they are encoded in the MG functions
         call CP%MGCAMB%model%compute_Einstein_Factors( a, CP%mg_par_cache, EV%mg_cache )
     end if
     !< MGCAMB MOD END
@@ -1998,7 +1999,6 @@
     pb43=4._dl/3*photbar
 
 
-
     ayprime(1)=adotoa*a
 
     !> MGCAMB MOD START:  equation of motion, here we use the non-RSA version of z and dz
@@ -2039,7 +2039,7 @@
         !>  variables name
         !    MassiveNuVarsOut( EV, y,  yprime,  a, grho, gpres,dgrho,dgq,dgpi, dgpi_diff,pidot_sum,clxnu_all)
         call MassiveNuVarsOut( EV, ay, ayprime, a, grho=EV%mg_cache%grhonu, gpres=EV%mg_cache%gpresnu, &
-                                dgrho=EV%mg_cache%dgrhonu, dgq=EV%mg_cache%dgqnu, dgpi=EV%mg_cache% )
+                               & dgrho=EV%mg_cache%dgrhonu, dgq=EV%mg_cache%dgqnu, dgpi=EV%mg_cache%dgpi )
 
         !> first Get sigma
         call CP%MGCAMB%model%compute_sigma( a, CP%mg_par_cache, EV%mg_cache )
