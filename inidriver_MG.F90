@@ -14,6 +14,11 @@
     use Bispectrum
     use CAMBmain
     use NonLinear
+
+    !> MGCAMB MOD START
+    use MGCAMB
+    !< MGCAMB MOD END
+
 #ifdef NAGF95
     use F90_UNIX
 #endif
@@ -115,6 +120,20 @@
         P%omegav = Ini_Read_Double('omega_lambda')
         P%omegan = Ini_Read_Double('omega_neutrino')
     end if
+
+    !> MGCAMB MOD START
+    mgcamb_par_cache%omegab = P%omegab
+    mgcamb_par_cache%omegac = P%omegac
+    mgcamb_par_cache%omegav = P%omegav
+    mgcamb_par_cache%h0     = P%H0
+    mgcamb_par_cache%h0_Mpc = P%H0 * (1.d3/c)
+    !< MGCAMB MOD END
+
+    !> MGCAMB MOD START: reading models and params
+    call MGCAMB_read_model_params( mgcamb_par_cache )
+    !< MGCAMB MOD END
+
+
 
     P%tcmb   = Ini_Read_Double('temp_cmb',COBE_CMBTemp)
     P%yhe    = Ini_Read_Double('helium_fraction',0.24_dl)

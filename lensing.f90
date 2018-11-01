@@ -219,9 +219,7 @@
         if (Cphil3(10) > lensing_sanity_check_amplitude) then
             write (*,*) 'You need to normalize realistically to use lensing.'
             write (*,*) 'see http://cosmocoffee.info/viewtopic.php?t=94'
-            !> MGCAMB MOD START: preventing the  code to stop ewhen theories have weird Cls
-            !call MpiStop()
-            !> MGCAMB MOD END
+            call MpiStop()
         end if
         if (lmax > CP%Max_l) then
             l=CP%Max_l
@@ -237,9 +235,7 @@
                 CEE(l) =  highL_CL_template(l, C_E)*fac2 *sc
                 CTE(l) =  highL_CL_template(l, C_Cross)*fac2*sc
                 if (Cphil3(CP%Max_l+1) > 1e-7) then
-                    !> MGCAMB MOD START: preventing the  code to stop ewhen theories have weird Cls
-                    !call MpiStop('You need to normalize the high-L template so it is dimensionless')
-                    !< MGCAMB MOD END
+                    call MpiStop('You need to normalize the high-L template so it is dimensionless')
                 end if
             end do
         end if
@@ -594,9 +590,7 @@
         if (Cphil3(10) > 1e-7) then
             write (*,*) 'You need to normalize realistically to use lensing.'
             write (*,*) 'see http://cosmocoffee.info/viewtopic.php?t=94'
-            !> MGCAMB MOD START: preventing the  code to stop ewhen theories have weird Cls
-            !stop
-            !< MGCAMB MOD END
+            stop
         end if
 
         lens_contrib=0

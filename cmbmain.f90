@@ -114,12 +114,7 @@
 
     integer :: l_smooth_sample = 3000 !assume transfer functions effectively small for k>2*l_smooth_sample
 
-#ifndef fixq
     real(dl) :: fixq = 0._dl !Debug output of one q
-#endif
-#ifndef fixq_array
-    real(dl), parameter, dimension(1) :: fixq_array = [ 0._dl ]
-#endif
 
     real(dl) :: ALens = 1._dl
 
@@ -135,12 +130,6 @@
     type(EvolutionVars) EV
     !     Timing variables for testing purposes. Used if DebugMsgs=.true. in ModelParams
     real(sp) actual,timeprev,starttime
-
-    !> MGCAMB MOD START: some quantities
-    real(dl)    :: k_start, k_end
-    integer     :: i
-    real(dl), dimension(:), allocatable :: temp_fixq_array
-    !< MGCAMB MOD END
 
     WantLateTime =  CP%DoLensing .or. num_redshiftwindows > 0 .or. num_custom_sources>0
 
@@ -185,39 +174,10 @@
 
     if (CP%WantCls) call SetkValuesForSources
 
-    !> MGCAMB MOD START
-    if ( DebugMGCAMB ) then
-        if( fix1 == 0._dl .and. any(fixq_array /= 0._dl ) ) then
-            ! allcate the q array:
-            allocate( temp_fixq_array, source=fixq_array )
-            !reset q values
-            call Ranges_Init( Evolve_q )
-            ! loop over fixq array
-            do i =1, size(temp_fixq_array)-1
-                k_start = temp_fixq_array(i)
-                k_end = temp_fixq_array(i+1)
-                call Ranges_Add( Evolve_q, k_start, k_end, nstep = 1, IsLog = .False. )
-            end do
-            call Ranges_GetArray(Evolve_q, .false.)
-            !some feedback
-            write(*,*) 'MGCAMB printing evolution of scalar variables at k:'
-            call Ranges_Write( Evolve_q )
-        end if
-    end if
-    !< MGCAMB MOD END
-
     if (CP%WantTransfer) call InitTransfer
 
     !***note that !$ is the prefix for conditional multi-processor compilation***
     !$ if (ThreadNum /=0) call OMP_SET_NUM_THREADS(ThreadNum)
-
-    !> MGCAMB MOD START
-    if ( DebugMGCAMB ) then
-        if ( CP%WantScalars ) then
-            call EV%mg_cache%open_cache_files( CP%MGCAMB%outroot )
-        end if
-    end if
-    !< MGCAMB MOD END
 
     if (CP%WantCls) then
         if (DebugMsgs .and. Feedbacklevel > 0) write(*,*) 'Set ',Evolve_q%npoints,' source k values'
@@ -248,16 +208,6 @@
         end if
 
     endif !WantCls
-
-    !> MGCAMB MOD START:close files for MGCAMB debug structure
-    if ( DebugEFTCAMB ) then
-        if (CP%WantScalars) then
-            call EV%eft_cache%close_cache_files( )
-        end if
-        if ( .not. all( fixq_array .eq. 0._dl ) ) stop
-    end if
-    !< MGCAMB
-
 
     ! If transfer functions are requested, set remaining k values and output
     if (CP%WantTransfer .and. global_error_flag==0) then
@@ -988,13 +938,6 @@
 
     !!Example code for plotting out variable evolution (can now do this better via python)
     if (fixq/=0._dl) then
-
-        ! MGCAMB MOD START: debug one k mode
-        if ( DebugMGCAMB ) then
-            write(*,*) 'MGCAMB printing evolution of scalar variables at k=', fixq
-        end if
-
-
         tol1=tol/exp(AccuracyBoost-1)
         call CreateTxtFile('evolve.txt',1)
         do j=1,1000
@@ -1009,13 +952,6 @@
             write (1,'(7E15.5)') tau, delta, growth, y(3), y(4), y(EV%g_ix), y(1)
         end do
         close(1)
-
-        !> MGCAMB MOD START:
-        if ( DebugMGCAMB ) then
-            call EV%mg_cache%close_cache_files( )
-        end if
-        !< MGCAMB MOD END.
-
         stop
     end if
 
@@ -1190,10 +1126,8 @@
     real(dl) c(24),w(EV%nvar,9), y(EV%nvar)
     real(dl) atol
 
-    !> MGCAMB MOD START: leaving this as it is but EFTCAMB does change it
     atol=tol/exp(AccuracyBoost-1)
     if (CP%Transfer%high_precision) atol=atol/10000
-    !< MGCAMB MOD END.
 
     ind=1
     call initial(EV,y, tau)
