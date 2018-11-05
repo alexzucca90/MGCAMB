@@ -1,9 +1,6 @@
 module MGCAMB
     use precision
 
-    !integer :: model
-
-
     ! new model selection flags
     integer :: MG_flag
     integer :: pure_MG_flag
@@ -18,7 +15,7 @@ module MGCAMB
 
     real(dl) :: GRtrans                     !< scale factor at which MG is switched on
 
-    ! BZ parametrization
+    ! BZ parametrization (and QS f(R))
     real(dl) :: B1
     real(dl) :: B2
     real(dl) :: lambda1_2
@@ -29,11 +26,32 @@ module MGCAMB
     real(dl) :: E11
     real(dl) :: E22
 
-    real(dl) :: MGQfix, MGRfix, Qnot, Rnot, sss
-    real(dl) :: Linder_gamma                !< for model 6 (Linder Gamma)
-    real(dl) :: beta_star, a_star, xi_star  !< for model 7 (symmetron)
-    real(dl) :: beta0, xi0, DilR, DilS, A_2 !< for model 8 and 10 (dilaton)
-    real(dl) :: F_R0, FRn                   !< for model 9 (large curvature f(R))
+    ! Q-R parametrization 1
+    real(dl) :: MGQfix
+    real(dl) :: MGRfix
+
+    ! Q-R parametrization 2
+    real(dl) :: Qnot
+    real(dl) :: Rnot
+    real(dl) :: sss
+
+    ! Growth rate gamma
+    real(dl) :: Linder_gamma
+
+    ! Symmetron
+    real(dl) :: beta_star
+    real(dl) :: a_star
+    real(dl) :: xi_star
+
+    ! Dilaton
+    real(dl) :: beta0
+    real(dl) :: xi0
+    real(dl) :: DilR
+    real(dl) :: DilS
+
+    ! Hu-Sawicki f(R) gravity
+    real(dl) :: F_R0
+    real(dl) :: FRn
 
     ! DES parametrization
     real(dl) :: mu0
@@ -54,6 +72,7 @@ module MGCAMB
         real(dl) :: omegav
         real(dl) :: h0
         real(dl) :: h0_Mpc
+        character(len=30) :: output_root
     end type MGCAMB_parameter_cache
 
     type(MGCAMB_parameter_cache) :: mgcamb_par_cache
@@ -114,8 +133,17 @@ module MGCAMB
         real(dl) :: MG_psidot
         real(dl) :: MG_ISW
         real(dl) :: MG_lensing
+        real(dl) :: source1
+        real(dl) :: source3
 
     end type MGCAMB_timestep_cache
+
+#ifdef DEBUG
+    logical , parameter :: DebugMGCAMB = .true.              !< MGCAMB debug flag.This will turn on printing of many things to aid debugging the code.
+#else
+    logical , parameter :: DebugMGCAMB = .false.             !< MGCAMB debug flag.This will turn on printing of many things to aid debugging the code.
+#endif
+
 
 contains
 
@@ -1012,6 +1040,14 @@ contains
             wnow = w0+(1._dl-a)*wa
             mg_cache%grhov_t = 3._dl*mg_par_cache%h0_Mpc**2*mg_par_cache%omegav*a**(-1._dl-3._dl*wnow)
             mg_cache%gpresv_t = mg_cache%grhov_t * wnow
+        else if ( DE_model == 3 ) then
+            write(*,*) 'This will contain the reconstruction of w_DE(a)'
+            write(*,*) 'Not implemented yet'
+            stop
+        else if ( DE_model == 4 ) then
+            write(*,*) 'This will contain the reconstruction of rho_DE(a)'
+            write(*,*) 'Not implemented yet'
+            stop
         else
             write(*,*) 'choose a DE model'
             stop
@@ -1033,6 +1069,8 @@ contains
             call print_MGCAMB_header
             write(*,*)
             write(*,*) 'MG_flag:', MG_flag
+
+            write(*,*) 'Debug:', DebugMGCAMB
 
 
             ! read GRtrans
@@ -1109,6 +1147,14 @@ contains
                 else if ( DE_model == 2 ) then
                     w0 = Ini_Read_Double('w0', -1._dl)
                     wa = Ini_Read_Double('wa', 0._dl)
+                else if ( DE_model == 3 ) then
+                    write(*,*) 'This will contain the reconstruction of w_DE(a)'
+                    write(*,*) 'Not implemented yet'
+                    stop
+                else if ( DE_model == 4 ) then
+                    write(*,*) 'This will contain the reconstruction of rho_DE(a)'
+                    write(*,*) 'Not implemented yet'
+                    stop
                 else if ( DE_model /= 0 ) then
                     write(*,*) 'Please choose a DE model'
                     stop
@@ -1274,8 +1320,90 @@ contains
         mg_cache%MG_psidot  = 0._dl
         mg_cache%MG_ISW     = 0._dl
         mg_cache%MG_lensing = 0._dl
+        mg_cache%source1    = 0._dl
+        mg_cache%source3    = 0._dl
 
     end subroutine
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Subroutine that opens the MGCAMB cache files (for Debug)
+    subroutine MGCAMB_open_cache_files
+        use precision
+        implicit none
+
+        ! 1. Open sources file
+        open(unit=111, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_sources.dat', status="new", &
+            & action="write")
+        write(111,*) '#  ', 'k  ', 'a  ', 'MG_ISW  ', 'MG_Lensing  ', 'S_T  ', 'S_lensing'
+
+        ! 2 Open MG functions file
+        open(unit=222, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_MG_fncs.dat', status="new",&
+            & action="write")
+        write(222,*) '#  ', 'k  ', 'a  ', 'mu  ', 'gamma'
+
+        ! 3. Open Einstein solutions file
+        open(unit=333, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_EinsteinSol.dat', status="new",&
+            & action="write")
+        write(333,*) '#  ', 'k  ', 'a  ', 'etak  ', 'z  ', 'sigma  ', 'etadot  ', 'sigmadot  '
+
+        ! 4. Open Perturbation solution file
+        open(unit=444, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_PerturbSol.dat', status="new",&
+        & action="write")
+        write(444,*) '#  ', 'k  ', 'a  ', 'dgrho  ', 'dgq  ', 'rhoDelta  ', 'dgpi  ', 'pidot_sum  ', 'dgpi_w_sum  '
+
+        ! 5. Open Background file
+        open(unit=555, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_Background.dat', status="new",&
+            & action="write")
+        write(555,*) '#  ', 'k  ', 'a  ', 'H  ', 'Hdot  ', 'grhov_t  ', 'gpresv_t  '
+
+    end subroutine MGCAMB_open_cache_files
+
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Subroutine that closes the MGCAMB cache files (for Debug)
+    subroutine MGCAMB_close_cache_files
+        use precision
+        implicit none
+
+        close(111);close(222); close(333);close(444);close(555)
+
+    end subroutine MGCAMB_close_cache_files
+
+
+    ! ---------------------------------------------------------------------------------------------
+    !> Subroutine that prints the MGCAMB cache on a file
+    subroutine MGCAMB_dump_cache( a, mg_cache )
+        use precision
+        implicit none
+
+        real(dl), intent(in) :: a   !< scale factor
+        type(MGCAMB_timestep_cache),  intent(in) :: mg_cache      !< cache containing the time-dependent quantities
+        character(*), parameter :: cache_output_format = 'e18.10'
+
+
+        ! 1. Write the sources
+        write(111,'(14'//cache_output_format//')') mg_cache%k, a, mg_cache%MG_ISW, mg_cache%MG_Lensing,&
+                                                    & mg_cache%source1, mg_cache%source3
+
+        ! 2. Write the MG functions and the potentials
+        write(222,'(14'//cache_output_format//')') mg_cache%k, a, mg_cache%mu, mg_cache%gamma, mg_cache%q, mg_cache%r, &
+                                                & mg_cache%MG_phi, mg_cache%MG_psi, mg_cache%MG_phidot, mg_cache%MG_psidot
+
+        ! 3. Write the Einstein equations solutions
+        write(333,'(14'//cache_output_format//')') mg_cache%k, a, mg_cache%etak, mg_cache%z, mg_cache%sigma,&
+                                                & mg_cache%etadot,mg_cache%sigmadot
+
+        ! 4. Write the Perturbations Solutions
+        write(444,'(14'//cache_output_format//')') mg_cache%k, a, mg_cache%dgrho, mg_cache%dgq, mg_cache%rhoDelta,&
+                                                    & mg_cache%dgpi, mg_cache%pidot_sum, mg_cache%dgpi_w_sum
+
+        !5. Write the background
+        write(555,'(14'//cache_output_format//')') mg_cache%k, a, mg_cache%adotoa, mg_cache%Hdot, mg_cache%grhov_t,&
+                                                    & mg_cache%gpresv_t
+
+
+
+    end subroutine MGCAMB_dump_cache
 
 
 
