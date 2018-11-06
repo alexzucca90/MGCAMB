@@ -297,6 +297,11 @@
     end function next_nu_nq
 
     recursive subroutine GaugeInterface_EvolveScal(EV,tau,y,tauend,tol1,ind,c,w)
+
+    !> MGCAMB MOD START
+    !use MGCAMB
+    !< MGCAMB MOD END
+
     use ThermoData
     type(EvolutionVars) EV, EVout
     real(dl) c(24),w(EV%nvar,9), y(EV%nvar), yout(EV%nvar), tol1, tau, tauend
@@ -336,7 +341,10 @@
         end do
     end if
 
+    !> MGCAMB MOD START
+    !if (DoLateRadTruncation .and. MG_flag == 0) then
     if (DoLateRadTruncation) then
+    !< MGCAMB MOD END
         if (.not. EV%no_nu_multpoles) & !!.and. .not. EV%has_nu_relativistic .and. tau_switch_nu_massless ==noSwitch)  &
             tau_switch_no_nu_multpoles=max(15/EV%k_buf*AccuracyBoost,min(taurend,matter_verydom_tau))
 
@@ -426,7 +434,10 @@
                     exit
                 end if
             end do
+        !> MGCAMB MOD START:
+        !else if (next_switch==tau_switch_no_nu_multpoles .and. MG_flag==0) then
         else if (next_switch==tau_switch_no_nu_multpoles) then
+        !< MGCAMB MOD END
             !Turn off neutrino hierarchies at late time where slow and not needed.
             ind=1
             EVout%no_nu_multpoles=.true.
@@ -435,7 +446,11 @@
             call CopyScalarVariableArray(y,yout, EV, EVout)
             y=yout
             EV=EVout
+
+        !> MGCAMB MOD START
+        !else if (next_switch==tau_switch_no_phot_multpoles .and. MG_flag == 0) then
         else if (next_switch==tau_switch_no_phot_multpoles) then
+        !< MGCAMB MOD END
             !Turn off photon hierarchies at late time where slow and not needed.
             ind=1
             EVout%no_phot_multpoles=.true.
@@ -1938,6 +1953,7 @@
     if (EV%no_nu_multpoles) then
         !RSA approximation of arXiv:1104.2933, dropping opactity terms in the velocity
         !Approximate total density variables with just matter terms
+        !write(*,*) 'using RSA at a:',a
         if ( tempmodel == 0 ) then
             z=(0.5_dl*dgrho/k + etak)/adotoa
             dz= -adotoa*z - 0.5_dl*dgrho/k
@@ -1945,6 +1961,7 @@
             qr=-4._dl/3*z
             pir=0
         else ! tempmodel /=0
+            ! this is the old RSA..
             clxr=2*(grhoc_t*clxc+grhob_t*clxb)/3/k**2
             qr= clxr*k/sqrt((grhoc_t+grhob_t)/3)*(2/3._dl)
             pir=0
@@ -1957,6 +1974,7 @@
     endif
 
     if (EV%no_phot_multpoles) then
+        !write(*,*) 'using RSA at a:',a
         if  ( tempmodel == 0 ) then
             if (.not. EV%no_nu_multpoles) then
                 z=(0.5_dl*dgrho/k + etak)/adotoa
@@ -2489,6 +2507,8 @@
         !> MGCAMB MOD START
         if ( tempmodel /= 0 ) then
             mgcamb_cache%dgpi_diff = dgpi_diff
+            ! redefining pidot_sum (more accurate)
+            mgcamb_cache%pidot_sum = pidot_sum
         end if
         !< MGCAMB MOD END
 
@@ -2496,7 +2516,7 @@
         if ( MG_flag == 0 ) then
             gpres=gpres_nu+ (grhog_t+grhor_t)/3 +grhov_t*w_lam
         else
-             gpres=gpres_nu+ (grhog_t+grhor_t)/3 + mgcamb_cache%gpresv_t
+            gpres=gpres_nu+ (grhog_t+grhor_t)/3 + mgcamb_cache%gpresv_t
         end if
 
         !> MGCAMB Mmodified OD START: Weyl Potential
@@ -2640,66 +2660,78 @@
                     tau0, tau_maxvis, EV%Kf,f_K)
             end if
 
-            !> MGCAMB MOD START
-            if ( DebugMGCAMB ) then
+        end if
 
-                !write(*,*) 'writing cache at a,k:', a,k
+        !> MGCAMB MOD START
+        if ( DebugMGCAMB ) then
 
-                if ( tempmodel == 0 ) then
-                    ! fill the cache with the GR stuff, then dump the cache,
-                    ! useful for comparing default CAMB with MGCAMB in GR limit
-                    mgcamb_cache%grhob_t    = grhob_t
-                    mgcamb_cache%grhoc_t    = grhoc_t
-                    mgcamb_cache%grhor_t    = grhor_t
-                    mgcamb_cache%grhog_t    = grhog_t
-                    mgcamb_cache%gpresnu_t  = gpres_nu
-                    mgcamb_cache%grhonu_t   = grhonu_t
-                    ! perturbation quantities
-                    mgcamb_cache%k          = k
-                    mgcamb_cache%k2         = k2
-                    mgcamb_cache%etak       = etak
-                    ! filling expansion history cache
-                    mgcamb_cache%adotoa     = adotoa
-                    mgcamb_cache%Hdot       = adotoa**2 - 0.5d0*(grho+gpres)
-                    ! fill perturbation cache
-                    mgcamb_cache%dgrho      = dgrho
-                    mgcamb_cache%dgq        = dgq
-                    mgcamb_cache%dgpi_w_sum = dgpi_w_sum
-                    mgcamb_cache%dgpi       = dgpi
-                    mgcamb_cache%rhoDelta   = dgrho + 3._dl * adotoa * dgq/ k
+            !write(*,*) 'writing cache at a,k:', a,k
 
-                    ! Einstein solutions
-                    mgcamb_cache%z          = z
-                    mgcamb_cache%sigma      = sigma
-                    mgcamb_cache%sigmadot   = sigmadot
-                    mgcamb_cache%etadot     = ayprime(2)/k
-                    mgcamb_cache%MG_Psi     = 0._dl         !< this needs to be changed
-                    mgcamb_cache%MG_Phi     = 0._dl         !< this needs to be changed
-                    mgcamb_cache%MG_Psidot  = 0._dl         !< this needs to be changed
-                    mgcamb_cache%MG_Phidot  = 0._dl         !< this needs to be changed
-                    mgcamb_cache%MG_ISW     = 2._dl*phidot
-                    mgcamb_cache%MG_lensing = phi
+            if ( tempmodel == 0 ) then
+                ! fill the cache with the GR stuff, then dump the cache,
+                ! useful for comparing default CAMB with MGCAMB in GR limit
+                mgcamb_cache%grhob_t    = grhob_t
+                mgcamb_cache%grhoc_t    = grhoc_t
+                mgcamb_cache%grhor_t    = grhor_t
+                mgcamb_cache%grhog_t    = grhog_t
+                mgcamb_cache%gpresnu_t  = gpres_nu
+                mgcamb_cache%grhonu_t   = grhonu_t
+                ! perturbation quantities
+                mgcamb_cache%k          = k
+                mgcamb_cache%k2         = k2
+                mgcamb_cache%etak       = etak
+                ! filling expansion history cache
+                mgcamb_cache%adotoa     = adotoa
+                mgcamb_cache%Hdot       = adotoa**2 - 0.5d0*(grho+gpres)
+                ! fill perturbation cache
+                mgcamb_cache%dgrho      = dgrho
+                mgcamb_cache%dgq        = dgq
+                mgcamb_cache%dgpi_w_sum = dgpi_w_sum
+                mgcamb_cache%dgpi       = dgpi
+                mgcamb_cache%rhoDelta   = dgrho + 3._dl * adotoa * dgq/ k
+                mgcamb_cache%pidot_sum  = pidot_sum
 
-                    ! MG functions
-                    mgcamb_cache%mu = 1._dl
-                    mgcamb_cache%gamma = 1._dl
-                    mgcamb_cache%q = 1._dl
-                    mgcamb_cache%r = 1._dl
-                end if
+                ! Einstein solutions
+                mgcamb_cache%z          = z
+                mgcamb_cache%sigma      = sigma
+                mgcamb_cache%sigmadot   = sigmadot
+                mgcamb_cache%etadot     = ayprime(2)/k
+                mgcamb_cache%MG_Psi     = 0._dl         !< this needs to be changed
+                mgcamb_cache%MG_Phi     = 0._dl         !< this needs to be changed
+                mgcamb_cache%MG_Psidot  = 0._dl         !< this needs to be changed
+                mgcamb_cache%MG_Phidot  = 0._dl         !< this needs to be changed
+                mgcamb_cache%MG_ISW     = 2._dl*phidot
+                mgcamb_cache%MG_lensing = 2._dl*phi
 
-                mgcamb_cache%source1 = EV%OutputSources(1)
-
-                if (size(EV%OutputSources) > 2) then
-                    mgcamb_cache%source1 = EV%OutputSources(3)
-                end if
-
-                ! dump cache into files
-                call MGCAMB_dump_cache( a, mgcamb_cache )
+                ! MG functions
+                mgcamb_cache%mu = 1._dl
+                mgcamb_cache%gamma = 1._dl
+                mgcamb_cache%q = 1._dl
+                mgcamb_cache%r = 1._dl
 
             end if
-            !< MGCAMB MOD END
+
+
+
+            if (associated(EV%OutputSources)) then
+                 mgcamb_cache%source1 = EV%OutputSources(1)
+
+                if (size(EV%OutputSources) > 2) then
+                    mgcamb_cache%source3 = EV%OutputSources(3)
+                else
+                    mgcamb_cache%source3 = 0._dl
+                end if
+            else
+                mgcamb_cache%source1 = 0._dl
+                mgcamb_cache%source3 = 0._dl
+            end if
+
+            ! dump cache into files
+            call MGCAMB_dump_cache( a, mgcamb_cache )
 
         end if
+        !< MGCAMB MOD END
+
     end if
 
     end subroutine derivs

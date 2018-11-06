@@ -185,6 +185,7 @@
 
     !> MGCAMB MOD START
     if ( DebugMGCAMB ) then
+        write(*,*) 'Writing cache on files'
         call MGCAMB_open_cache_files
     end if
     !< MGCAMB MOD END
@@ -222,6 +223,7 @@
 
     !> MGCAMB MOD START
     if ( DebugMGCAMB ) then
+        write(*,*) 'closing cache files'
         call MGCAMB_close_cache_files
     end if
     !< MGCMAB MOD END

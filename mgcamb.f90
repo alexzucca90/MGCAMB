@@ -254,21 +254,21 @@ contains
 
             !> adding massive neutrinos contributions
 
-            !f1 = mg_cache%k2+3._dl*( mg_cache%adotoa**2 - mg_cache%Hdot )
-            f1 = mg_cache%k2+0.5d0*(3._dl*(mg_cache%grhoc_t+mg_cache%grhob_t) &
-                & + 4._dl*(mg_cache%grhog_t+mg_cache%grhor_t) + 3._dl*(mg_cache%grhonu_t+mg_cache%gpresnu_t) &
-                & + 3._dl*(mg_cache%grhov_t+mg_cache%gpresv_t))
+            f1 = mg_cache%k2+3._dl*( mg_cache%adotoa**2 - mg_cache%Hdot )
+            !f1 = mg_cache%k2+0.5d0*(3._dl*(mg_cache%grhoc_t+mg_cache%grhob_t) &
+            !    & + 4._dl*(mg_cache%grhog_t+mg_cache%grhor_t) + 3._dl*(mg_cache%grhonu_t+mg_cache%gpresnu_t) &
+            !    & + 3._dl*(mg_cache%grhov_t+mg_cache%gpresv_t))
 
             term1 = mg_cache%gamma*mg_cache%mu* f1 * mg_cache%dgq/mg_cache%k
 
             !> adding massive neutrinos contribution, if w_DE /= -1 this has to be changed
-            term2 = mg_cache%k2*mg_cache%MG_alpha* ((mg_cache%mu* mg_cache%gamma- 1._dl)*(mg_cache%grhoc_t+mg_cache%grhob_t&
-                    & +(4._dl/3._dl)*(mg_cache%grhog_t+mg_cache%grhor_t) + (mg_cache%grhonu_t + mg_cache%gpresnu_t)) &
-                    & - (mg_cache%grhov_t+ mg_cache%gpresv_t))
+            !term2 = mg_cache%k2*mg_cache%MG_alpha* ((mg_cache%mu* mg_cache%gamma- 1._dl)*(mg_cache%grhoc_t+mg_cache%grhob_t&
+            !        & +(4._dl/3._dl)*(mg_cache%grhog_t+mg_cache%grhor_t) + (mg_cache%grhonu_t + mg_cache%gpresnu_t)) &
+            !        & - (mg_cache%grhov_t+ mg_cache%gpresv_t))
 
-            !term2 = mg_cache%k2*mg_cache%MG_alpha* (mg_cache%mu* mg_cache%gamma*( mg_cache%grhoc_t+mg_cache%grhob_t&
-            !        & +(4._dl/3._dl)*(mg_cache%grhog_t+mg_cache%grhor_t) + (mg_cache%grhonu_t + mg_cache%gpresnu_t) ) &
-            !        & - 2._dl*(mg_cache%adotoa**2 - mg_cache%Hdot))
+            term2 = mg_cache%k2*mg_cache%MG_alpha* (mg_cache%mu* mg_cache%gamma*( mg_cache%grhoc_t+mg_cache%grhob_t   &
+                    & +(4._dl/3._dl)*(mg_cache%grhog_t+mg_cache%grhor_t) + (mg_cache%grhonu_t + mg_cache%gpresnu_t) ) &
+                    & - 2._dl*(mg_cache%adotoa**2 - mg_cache%Hdot))
 
             term3= (mg_cache%mu * ( mg_cache%gamma -1._dl)* mg_cache%adotoa - mg_cache%gamma*mg_cache%mudot &
                     & - mg_cache%gammadot*mg_cache%mu )*mg_cache%rhoDelta
@@ -1334,27 +1334,27 @@ contains
         ! 1. Open sources file
         open(unit=111, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_sources.dat', status="new", &
             & action="write")
-        write(111,*) '#  ', 'k  ', 'a  ', 'MG_ISW  ', 'MG_Lensing  ', 'S_T  ', 'S_lensing'
+        write(111,*)  'k  ', 'a  ', 'MG_ISW  ', 'MG_Lensing  ', 'S_T  ', 'S_lensing'
 
         ! 2 Open MG functions file
         open(unit=222, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_MG_fncs.dat', status="new",&
             & action="write")
-        write(222,*) '#  ', 'k  ', 'a  ', 'mu  ', 'gamma'
+        write(222,*)  'k  ', 'a  ', 'mu  ', 'gamma ', 'Q ', 'R ', 'Phi ', 'Psi ', 'dPhi ', 'dPsi '
 
         ! 3. Open Einstein solutions file
         open(unit=333, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_EinsteinSol.dat', status="new",&
             & action="write")
-        write(333,*) '#  ', 'k  ', 'a  ', 'etak  ', 'z  ', 'sigma  ', 'etadot  ', 'sigmadot  '
+        write(333,*) 'k  ', 'a  ', 'etak  ', 'z  ', 'sigma  ', 'etadot  ', 'sigmadot  '
 
         ! 4. Open Perturbation solution file
         open(unit=444, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_PerturbSol.dat', status="new",&
         & action="write")
-        write(444,*) '#  ', 'k  ', 'a  ', 'dgrho  ', 'dgq  ', 'rhoDelta  ', 'dgpi  ', 'pidot_sum  ', 'dgpi_w_sum  '
+        write(444,*)  'k  ', 'a  ', 'dgrho  ', 'dgq  ', 'rhoDelta  ', 'dgpi  ', 'pidot_sum  ', 'dgpi_w_sum  '
 
         ! 5. Open Background file
         open(unit=555, file=TRIM(mgcamb_par_cache%output_root) // 'MGCAMB_debug_Background.dat', status="new",&
             & action="write")
-        write(555,*) '#  ', 'k  ', 'a  ', 'H  ', 'Hdot  ', 'grhov_t  ', 'gpresv_t  '
+        write(555,*)  'k  ', 'a  ', 'H  ', 'Hdot  ', 'grhov_t  ', 'gpresv_t  '
 
     end subroutine MGCAMB_open_cache_files
 
@@ -1378,7 +1378,7 @@ contains
 
         real(dl), intent(in) :: a   !< scale factor
         type(MGCAMB_timestep_cache),  intent(in) :: mg_cache      !< cache containing the time-dependent quantities
-        character(*), parameter :: cache_output_format = 'e18.10'
+        character(*), parameter :: cache_output_format = 'e18.8'
 
 
         ! 1. Write the sources
