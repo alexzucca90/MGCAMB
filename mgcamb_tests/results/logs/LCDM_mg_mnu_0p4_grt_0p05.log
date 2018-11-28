@@ -1,0 +1,44 @@
+Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG
+***************************************************************
+     __  _________  ________   __  ______  
+    /  \/  / ____/ / ___/ _ | /  |/  / _ ) 
+   / /\_/ / /_,-, / /__/ __ |/ /|_/ / _  | 
+  /_/  /_/_____/  \___/_/ |_/_/  /_/____/   v 3.0     
+  
+        Modified Growth with CAMB 
+  
+***************************************************************
+
+ MG_flag:           1
+ Debug: F
+     GRtrans:   1.0000000000000000E-002
+     MGCAMB: mu-gamma parametrization
+         BZ parametrization
+ DE_model:           0
+Reion redshift       =  10.811
+Om_b h^2             =  0.022600
+Om_c h^2             =  0.112000
+Om_nu h^2            =  0.004267
+Om_Lambda            =  0.716599
+Om_K                 =  0.000000
+Om_m (1-Om_K-Om_L)   =  0.283401
+100 theta (CosmoMC)  =  1.014699
+N_eff (total)        =  4.046000
+ 1 nu, g= 1.0115 m_nu*c^2/k_B/T_nu0=   2367.02 (m_nu=  0.398 eV)
+Reion opt depth      =  0.0900
+Age of universe/GYr  =  13.676
+zstar                =  1089.31
+r_s(zstar)/Mpc       =  141.32
+100*theta            =  1.014840
+DA(zstar)/Gpc        =  13.92503
+zdrag                =  1060.20
+r_s(zdrag)/Mpc       =  143.90
+k_D(zstar) Mpc       =  0.1416
+100*theta_D          =  0.159290
+z_EQ (if v_nu=1)     =  2835.67
+k_EQ Mpc (if v_nu=1) =  0.009230
+100*theta_EQ         =  0.912289
+100*theta_rs_EQ      =  0.499776
+tau_recomb/Mpc       =  275.18  tau_now/Mpc =  14200.1
+at z =  0.000 sigma8 (all matter) =  0.6667
+at z =  0.000 sigma8^2_vd/sigma8  =  0.3331

@@ -55,12 +55,11 @@ module MGCAMB
 
     ! DES parametrization
     real(dl) :: mu0
-    real(dl) :: simga0
+    real(dl) :: sigma0
 
     ! DE model parameters
-    real(dl) :: wDE             !< constant wDE
-    real(dl) :: w0              !< w0 parameters for DE
-    real(dl) :: wa              !< wa parameters for DE
+    real(dl) :: w0DE              !< w0 parameters for DE
+    real(dl) :: waDE              !< waDE parameters for DE
 
     character(len=(10)) :: MGCAMB_version = 'v 3.0'
 
@@ -166,6 +165,9 @@ contains
             mg_cache%mudot      = MGCAMB_MuDot( a, mg_par_cache, mg_cache )
             mg_cache%gamma      = MGCAMB_Gamma( a, mg_par_cache, mg_cache )
             mg_cache%gammadot   = MGCAMB_GammaDot( a, mg_par_cache, mg_cache )
+
+            !write(*,*) 'a, k, mu, mudot, gamma, gammadot', a, mg_cache%k, mg_cache%mu,&
+            !            mg_cache%mudot, mg_cache%gamma, mg_cache%gammadot
 
             ! other EFT functions are zero
             mg_cache%q      = 0._dl
@@ -428,7 +430,11 @@ contains
                     MGCAMB_Mu = (1._dl + B1 * LKA1)/(1._dl + LKA1)
 
                 else if ( mugamma_par == 2 ) then ! Planck parametrization
-                    omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+
+                    ! changing the following
+                    !omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+
+                    omegaDE_t = mg_cache%grhov_t / 3._dl / mg_cache%adotoa**2
                     MGCAMB_Mu = 1._dl + E11*omegaDE_t
 
                 else if ( mugamma_par == 3 ) then
@@ -440,8 +446,13 @@ contains
 
                 if ( muSigma_par == 1 ) then ! DES parametrization
 
-                    omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    !omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    !MGCAMB_Mu = 1._dl + mu0 * omegaDE_t/mg_par_cache%omegav
+
+                    ! this is being changed
+                    omegaDE_t = mg_cache%grhov_t / 3._dl / mg_cache%adotoa**2
                     MGCAMB_Mu = 1._dl + mu0 * omegaDE_t/mg_par_cache%omegav
+
 
                 else if ( muSigma_par == 2 ) then
                     MGCAMB_Mu = 1._dl
@@ -528,8 +539,14 @@ contains
                     MGCAMB_Mudot = ((B1 - 1._dl) * mg_cache%adotoa * ss * LKA1) / ((1._dl+LKA1)**2._dl)
 
                 else if ( mugamma_par == 2 ) then ! Planck parametrization
-                    omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
-                                & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+
+                    ! changingh the following quantity
+                    !omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
+                    !            & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+
+                    omegaDEdot=-(mg_cache%grhov_t+3._dl*mg_cache%gpresv_t)/3._dl/mg_cache%adotoa &
+                            & - 2._dl*mg_cache%Hdot/3._dl/mg_cache%adotoa**3*mg_cache%grhov_t
+
                     MGCAMB_Mudot = E11*omegaDEdot
 
                 else if ( mugamma_par == 3 ) then
@@ -540,8 +557,12 @@ contains
             else if ( pure_MG_flag == 2 ) then ! mu-Sigma
 
                 if ( muSigma_par == 1 ) then ! DES parametrization
-                    omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
-                                & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    ! changing the following
+                    !omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
+                    !            & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    omegaDEdot=-(mg_cache%grhov_t+3._dl*mg_cache%gpresv_t)/3._dl/mg_cache%adotoa &
+                                & - 2._dl*mg_cache%Hdot/3._dl/mg_cache%adotoa**3*mg_cache%grhov_t
+
                     MGCAMB_Mudot =  mu0 * omegaDEdot/mg_par_cache%omegav
 
                 else if ( muSigma_par == 2 ) then
@@ -640,8 +661,9 @@ contains
                     MGCAMB_Gamma = (1._dl + B2 * LKA2)/(1._dl +LKA2)
 
                 else if ( mugamma_par == 2 ) then ! Planck parametrization
-                    omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
-
+                    ! changing the following
+                    !omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    omegaDE_t = mg_cache%grhov_t / 3._dl / mg_cache%adotoa**2
                     MGCAMB_Gamma = 1._dl+E22*omegaDE_t
 
                 else if ( mugamma_par == 3 ) then
@@ -652,8 +674,10 @@ contains
             else if ( pure_MG_flag == 2 ) then ! mu-Sigma
 
                 if ( muSigma_par == 1 ) then ! DES parametrization
-                    omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
-                    sigma_t = 1._dl + simga0 * omegaDE_t / mg_par_cache%omegav
+                    ! changing the following
+                    !omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    omegaDE_t = mg_cache%grhov_t / 3._dl / mg_cache%adotoa**2
+                    sigma_t = 1._dl + sigma0 * omegaDE_t / mg_par_cache%omegav
                     mu_t    = 1._dl + mu0 * omegaDE_t / mg_par_cache%omegav
                     MGCAMB_Gamma = 2._dl * sigma_t / mu_t - 1._dl
 
@@ -741,10 +765,13 @@ contains
                     MGCAMB_Gammadot = ((B2 -1._dl)*mg_cache%adotoa * ss* LKA2)/((1._dl+LKA2)**2._dl)
 
                 else if ( mugamma_par == 2 ) then ! Planck parametrization
-                    omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
-                                & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    ! changing the following
+                    !omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
+                    !            & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                    omegaDEdot=-(mg_cache%grhov_t+3._dl*mg_cache%gpresv_t)/3._dl/mg_cache%adotoa &
+                                & - 2._dl*mg_cache%Hdot/3._dl/mg_cache%adotoa**3*mg_cache%grhov_t
 
-                    MGCAMB_Gammadot = 1._dl+E22*omegaDEdot
+                    MGCAMB_Gammadot = E22*omegaDEdot
 
                 else if ( mugamma_par == 3 ) then
                     MGCAMB_Gammadot = 0._dl
@@ -754,11 +781,15 @@ contains
             else if ( pure_MG_flag == 2 ) then ! mu-Sigma
 
                 if ( muSigma_par == 1 ) then ! DES parametrization
-                omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
-                omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
-                            & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
-                sigma_t     = 1._dl + simga0 * omegaDE_t / mg_par_cache%omegav
-                sigmadot_t  = simga0 * omegaDEdot / mg_par_cache%omegav
+
+                ! changing the following
+                !omegaDE_t = mg_cache%grhov_t / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                !omegaDEdot = - 3._dl * mg_cache%adotoa * (mg_cache%grhov_t + mg_cache%gpresv_t) &
+                !            & / a**2 / 3._dl / mg_par_cache%h0_Mpc**2
+                omegaDEdot  =-(mg_cache%grhov_t+3._dl*mg_cache%gpresv_t)/3._dl/mg_cache%adotoa &
+                                & - 2._dl*mg_cache%Hdot/3._dl/mg_cache%adotoa**3*mg_cache%grhov_t
+                sigma_t     = 1._dl + sigma0 * omegaDE_t / mg_par_cache%omegav
+                sigmadot_t  = sigma0 * omegaDEdot / mg_par_cache%omegav
                 mu_t        = 1._dl + mu0 * omegaDE_t / mg_par_cache%omegav
                 mudot_t     = mu0 * omegaDEdot / mg_par_cache%omegav
                 MGCAMB_Gammadot = 2._dl * sigmadot_t / mu_t - 2._dl *sigma_t*mudot_t/mu_t**2
@@ -1034,10 +1065,10 @@ contains
             mg_cache%grhov_t = 3._dl*mg_par_cache%h0_Mpc**2 * mg_par_cache%omegav *a**2
             mg_cache%gpresv_t = - mg_cache%grhov_t
         else if ( DE_model == 1 ) then
-            mg_cache%grhov_t = 3._dl*mg_par_cache%h0_Mpc**2*mg_par_cache%omegav*a**(-1._dl-3._dl*wDE)
-            mg_cache%gpresv_t = mg_cache%grhov_t * wDE
+            mg_cache%grhov_t = 3._dl*mg_par_cache%h0_Mpc**2*mg_par_cache%omegav*a**(-1._dl-3._dl*w0DE)
+            mg_cache%gpresv_t = mg_cache%grhov_t * w0DE
         else if (DE_model == 2 ) then
-            wnow = w0+(1._dl-a)*wa
+            wnow = w0DE+(1._dl-a)*waDE
             mg_cache%grhov_t = 3._dl*mg_par_cache%h0_Mpc**2*mg_par_cache%omegav*a**(-1._dl-3._dl*wnow)
             mg_cache%gpresv_t = mg_cache%grhov_t * wnow
         else if ( DE_model == 3 ) then
@@ -1096,6 +1127,7 @@ contains
                         write(*,*) '        Planck parametrization'
                         E11     = Ini_Read_Double('E11', 0._dl)
                         E22     = Ini_Read_Double('E22', 0._dl)
+                        write(*,*) 'E11, E22', E11, E22
                     else
                         write(*,*) ' write your own mu-gamma parametrization in mgcamb.f90'
                         stop
@@ -1104,7 +1136,7 @@ contains
 
                 else if ( pure_MG_flag == 2 ) then ! mu-Sigma
                     write(*,*) '    MGCAMB: mu-Sigma parametrization'
-                    muSigma_par = Ini_Read_Int('muSigma_par', 0)
+                    muSigma_par = Ini_Read_Int('musigma_par', 1)
                     if ( muSigma_par == 1 ) then
                         write(*,*) '        DES parametrization'
                         E11     = Ini_Read_Double('E11', 0._dl)
@@ -1143,10 +1175,10 @@ contains
                 write(*,*) 'DE_model:', DE_model
 
                 if ( DE_model == 1 ) then
-                    wDE = Ini_Read_Double('wDE', -1._dl)
+                    w0DE = Ini_Read_Double('w0DE', -1._dl)
                 else if ( DE_model == 2 ) then
-                    w0 = Ini_Read_Double('w0', -1._dl)
-                    wa = Ini_Read_Double('wa', 0._dl)
+                    w0DE = Ini_Read_Double('w0DE', -1._dl)
+                    waDE = Ini_Read_Double('waDE', 0._dl)
                 else if ( DE_model == 3 ) then
                     write(*,*) 'This will contain the reconstruction of w_DE(a)'
                     write(*,*) 'Not implemented yet'
