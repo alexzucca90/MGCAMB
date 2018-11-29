@@ -1139,8 +1139,9 @@ contains
                     muSigma_par = Ini_Read_Int('musigma_par', 1)
                     if ( muSigma_par == 1 ) then
                         write(*,*) '        DES parametrization'
-                        E11     = Ini_Read_Double('E11', 0._dl)
+                        mu0     = Ini_Read_Double('mu0', 0._dl)
                         sigma0  = Ini_Read_Double('sigma0', 0._dl)
+                        write(*,*) 'mu0, sigma0:', mu0, sigma0
                     else if ( muSigma_par == 2 ) then
                         write(*,*) 'write you own mu-sigma parametrization in mgcamb.f90'
                         stop
