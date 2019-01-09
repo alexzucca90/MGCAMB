@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -N WLonly
+#PBS -l nodes=1:ppn=8:bigmem:mpi
+#PBS -q bigmem
+
+source /opt/intel/composerxe/bin/compilervars.sh intel64
+export PATH=$PATH:/opt/bin/
+export PATH=/opt/openmpi-intel_1.8.3/bin/:$PATH
+export LD_LIBRARY_PATH=/opt/openmpi-intel_1.8.3/lib/:$LD_LIBRARY_PATH
+
+
+export PLANCKLIKE=cliklike
+export CLIK_PATH=/opt/plc-2.0
+source $CLIK_PATH/bin/clik_profile.sh
+
+cd /remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/ 
+
+#make clean
+
+#make delete
+
+#make
+
+
+nice -19 mpiexec -machinefile $PBS_NODEFILE -n 8 ./cosmomc EUmock_10bin_bfpk15_w0wa.ini
+
+

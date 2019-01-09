@@ -1,0 +1,87 @@
+ar: creating ReleaseMPI/libcamb_recfast.a
+RD_MockMaker.f90(121): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+RD_MockMaker.f90(199): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+redshiftdrift.f90(213): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+redshiftdrift.f90(257): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+redshiftdrift.f90(296): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+redshiftdrift.f90(336): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+WL_MockMaker.f90(310): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+WL_MockMaker.f90(534): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+wl_mock.f90(236): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+    55 FORMAT(100(1X,e15.9))
+----------------------^
+wl_mock.f90(414): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+    35 FORMAT(100(1X,e15.9))
+----------------------^
+wl_mock.f90(794): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+          write(40,'(100(1X,e15.9))') ll(il),(addsys(il,ib,ib),ib=1,this%num_z_bins)
+-----------------------------^
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007FF72AE378D0  Unknown               Unknown  Unknown
+libpthread.so.0    00007FF72AE36ADD  Unknown               Unknown  Unknown
+cosmomc            0000000000694023  Unknown               Unknown  Unknown
+cosmomc            00000000006930BB  Unknown               Unknown  Unknown
+cosmomc            00000000006B60E9  Unknown               Unknown  Unknown
+cosmomc            00000000006B42F5  Unknown               Unknown  Unknown
+cosmomc            000000000042FD82  Unknown               Unknown  Unknown
+cosmomc            00000000004DD04E  Unknown               Unknown  Unknown
+cosmomc            00000000004DE0F6  Unknown               Unknown  Unknown
+cosmomc            00000000004E8F5B  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007FF72AA99B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007FD6EE1AF8D0  Unknown               Unknown  Unknown
+libpthread.so.0    00007FD6EE1AEB3D  Unknown               Unknown  Unknown
+cosmomc            0000000000683FD9  Unknown               Unknown  Unknown
+cosmomc            00000000006837DE  Unknown               Unknown  Unknown
+cosmomc            0000000000417258  Unknown               Unknown  Unknown
+cosmomc            00000000004479A9  Unknown               Unknown  Unknown
+cosmomc            00000000005C47CA  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007FD6EDE11B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: severe (28): CLOSE error, unit -143, file "Unknown"
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000695BEE  Unknown               Unknown  Unknown
+libpthread.so.0    00007FD6EE1AF8D0  Unknown               Unknown  Unknown
+libpthread.so.0    00007FD6EE1AEB3D  Unknown               Unknown  Unknown
+cosmomc            0000000000683FD9  Unknown               Unknown  Unknown
+cosmomc            00000000006837DE  Unknown               Unknown  Unknown
+cosmomc            0000000000417258  Unknown               Unknown  Unknown
+cosmomc            00000000004479A9  Unknown               Unknown  Unknown
+cosmomc            00000000005C47CA  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007FD6EDE11B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+[bigmem08:24580] 5 more processes have sent help message help-mpi-api.txt / mpi-abort
+[bigmem08:24580] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages

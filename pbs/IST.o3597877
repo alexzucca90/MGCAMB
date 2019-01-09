@@ -1,0 +1,174 @@
+cd ./source && make clean
+make[1]: Entering directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/source'
+rm -f ReleaseMPI/*.o ReleaseMPI/*.mod ../core
+rm -rf Release*
+rm -rf Debug*
+cd ../camb; make clean
+make[2]: Entering directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/camb'
+rm -f *.o *.a *.d core *.mod ReleaseMPI/*.o ReleaseMPI/*.mod
+rm -rf Release*
+rm -rf Debug*
+make[2]: Leaving directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/camb'
+make[1]: Leaving directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/source'
+rm -f cosmomc
+rm -f cosmomc_debug
+rm -f getdist
+cd ./source && make cosmomc BUILD=MPI
+make[1]: Entering directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/source'
+mkdir -p ReleaseMPI
+cd ../camb && \
+make --file=Makefile_main libcamb OUTPUT_DIR=ReleaseMPI \
+RECOMBINATION=recfast EQUATIONS=equations_ppf NONLINEAR=halofit_ppf
+make[2]: Entering directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/camb'
+mkdir -p ReleaseMPI
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c constants.f90 -o ReleaseMPI/constants.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c utils.F90 -o ReleaseMPI/utils.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c subroutines.f90 -o ReleaseMPI/subroutines.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c inifile.f90 -o ReleaseMPI/inifile.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c power_tilt.f90 -o ReleaseMPI/power_tilt.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c recfast.f90 -o ReleaseMPI/recfast.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c reionization.f90 -o ReleaseMPI/reionization.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c modules.f90 -o ReleaseMPI/modules.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c bessels.f90 -o ReleaseMPI/bessels.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c equations_ppf.f90 -o ReleaseMPI/equations_ppf.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c halofit_ppf.f90 -o ReleaseMPI/halofit_ppf.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c lensing.f90 -o ReleaseMPI/lensing.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c SeparableBispectrum.F90 -o ReleaseMPI/SeparableBispectrum.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c cmbmain.f90 -o ReleaseMPI/cmbmain.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -module ReleaseMPI -IReleaseMPI/ -c camb.f90 -o ReleaseMPI/camb.o
+ar -r ReleaseMPI/libcamb_recfast.a ReleaseMPI/constants.o  ReleaseMPI/utils.o   ReleaseMPI/subroutines.o ReleaseMPI/inifile.o  ReleaseMPI/power_tilt.o  ReleaseMPI/recfast.o ReleaseMPI/reionization.o ReleaseMPI/modules.o ReleaseMPI/bessels.o ReleaseMPI/equations_ppf.o ReleaseMPI/halofit_ppf.o ReleaseMPI/lensing.o ReleaseMPI/SeparableBispectrum.o ReleaseMPI/cmbmain.o ReleaseMPI/camb.o
+make[2]: Leaving directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/camb'
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c MiscUtils.f90 -o ReleaseMPI/MiscUtils.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c ArrayUtils.f90 -o ReleaseMPI/ArrayUtils.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c StringUtils.f90 -o ReleaseMPI/StringUtils.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c MpiUtils.f90 -o ReleaseMPI/MpiUtils.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c FileUtils.f90 -o ReleaseMPI/FileUtils.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c RandUtils.f90 -o ReleaseMPI/RandUtils.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c ObjectLists.f90 -o ReleaseMPI/ObjectLists.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c Interpolation.f90 -o ReleaseMPI/Interpolation.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c IniObjects.f90 -o ReleaseMPI/IniObjects.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c ObjectParamNames.f90 -o ReleaseMPI/ObjectParamNames.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c Matrix_utils_new.f90 -o ReleaseMPI/Matrix_utils_new.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c settings.f90 -o ReleaseMPI/settings.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c samples.f90 -o ReleaseMPI/samples.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c IO.f90 -o ReleaseMPI/IO.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c GeneralTypes.f90 -o ReleaseMPI/GeneralTypes.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c likelihood.f90 -o ReleaseMPI/likelihood.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c BaseParameters.f90 -o ReleaseMPI/BaseParameters.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c propose.f90 -o ReleaseMPI/propose.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c ParamSet.f90 -o ReleaseMPI/ParamSet.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c PowellConstrainedMinimize.f90 -o ReleaseMPI/PowellConstrainedMinimize.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CosmologyTypes.f90 -o ReleaseMPI/CosmologyTypes.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CosmoTheory.f90 -o ReleaseMPI/CosmoTheory.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c Calculator_Cosmology.f90 -o ReleaseMPI/Calculator_Cosmology.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c Likelihood_Cosmology.f90 -o ReleaseMPI/Likelihood_Cosmology.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CMBlikes.f90 -o ReleaseMPI/CMBlikes.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CMB_BK_Planck.f90 -o ReleaseMPI/CMB_BK_Planck.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c cliklike.f90 -o ReleaseMPI/cliklike.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c mpk.f90 -o ReleaseMPI/mpk.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c wigglez.f90 -o ReleaseMPI/wigglez.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c bao.f90 -o ReleaseMPI/bao.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c RD_MockMaker.f90 -o ReleaseMPI/RD_MockMaker.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c redshiftdrift.f90 -o ReleaseMPI/redshiftdrift.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c supernovae_Union2.f90 -o ReleaseMPI/supernovae_Union2.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c supernovae_SNLS.f90 -o ReleaseMPI/supernovae_SNLS.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c supernovae_JLA.f90 -o ReleaseMPI/supernovae_JLA.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c szcounts.f90 -o ReleaseMPI/szcounts.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c supernovae.f90 -o ReleaseMPI/supernovae.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c HST.f90 -o ReleaseMPI/HST.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CMB.f90 -o ReleaseMPI/CMB.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c bbn.f90 -o ReleaseMPI/bbn.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c ElementAbundances.f90 -o ReleaseMPI/ElementAbundances.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c wl.f90 -o ReleaseMPI/wl.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c WL_MockMaker.f90 -o ReleaseMPI/WL_MockMaker.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c wl_mock.f90 -o ReleaseMPI/wl_mock.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c DataLikelihoods.f90 -o ReleaseMPI/DataLikelihoods.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c calclike.f90 -o ReleaseMPI/calclike.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c ImportanceSampling.f90 -o ReleaseMPI/ImportanceSampling.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c MCMC.f90 -o ReleaseMPI/MCMC.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c minimize.f90 -o ReleaseMPI/minimize.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c SampleCollector.f90 -o ReleaseMPI/SampleCollector.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c GeneralSetup.f90 -o ReleaseMPI/GeneralSetup.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CalcLike_Cosmology.f90 -o ReleaseMPI/CalcLike_Cosmology.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c Calculator_CAMB.f90 -o ReleaseMPI/Calculator_CAMB.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CosmologyParameterizations.f90 -o ReleaseMPI/CosmologyParameterizations.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c CosmologyConfig.f90 -o ReleaseMPI/CosmologyConfig.o
+mpif90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/ -c driver.F90 -o ReleaseMPI/driver.o
+mpif90 -o ../cosmomc ReleaseMPI/MiscUtils.o ReleaseMPI/ArrayUtils.o ReleaseMPI/StringUtils.o ReleaseMPI/MpiUtils.o ReleaseMPI/FileUtils.o ReleaseMPI/RandUtils.o ReleaseMPI/ObjectLists.o ReleaseMPI/Interpolation.o ReleaseMPI/IniObjects.o ReleaseMPI/ObjectParamNames.o ReleaseMPI/Matrix_utils_new.o  ReleaseMPI/settings.o ReleaseMPI/samples.o ReleaseMPI/IO.o ReleaseMPI/likelihood.o ReleaseMPI/GeneralTypes.o ReleaseMPI/BaseParameters.o ReleaseMPI/propose.o ReleaseMPI/ParamSet.o ReleaseMPI/PowellConstrainedMinimize.o ReleaseMPI/ImportanceSampling.o ReleaseMPI/MCMC.o ReleaseMPI/minimize.o ReleaseMPI/SampleCollector.o ReleaseMPI/GeneralSetup.o ReleaseMPI/CosmologyTypes.o ReleaseMPI/CosmoTheory.o ReleaseMPI/bbn.o ReleaseMPI/Calculator_Cosmology.o ReleaseMPI/CalcLike_Cosmology.o ReleaseMPI/Likelihood_Cosmology.o ReleaseMPI/Calculator_CAMB.o ReleaseMPI/CMB_BK_Planck.o ReleaseMPI/cliklike.o ReleaseMPI/mpk.o ReleaseMPI/wigglez.o ReleaseMPI/bao.o ReleaseMPI/RD_MockMaker.o ReleaseMPI/redshiftdrift.o ReleaseMPI/supernovae_Union2.o ReleaseMPI/supernovae_SNLS.o ReleaseMPI/supernovae_JLA.o ReleaseMPI/szcounts.o ReleaseMPI/supernovae.o ReleaseMPI/HST.o  ReleaseMPI/CMB.o ReleaseMPI/CMBlikes.o ReleaseMPI/ElementAbundances.o ReleaseMPI/wl.o ReleaseMPI/WL_MockMaker.o ReleaseMPI/wl_mock.o ReleaseMPI/CosmologyParameterizations.o ReleaseMPI/DataLikelihoods.o ReleaseMPI/calclike.o ReleaseMPI/CosmologyConfig.o ReleaseMPI/driver.o -L../camb/ReleaseMPI -lcamb_recfast    -L/opt/plc-2.0/lib -lclik_f90 -mkl -openmp -O3 -no-prec-div -fpp -xHost -DMPI -DCLIK -I../camb/ReleaseMPI -I/opt/plc-2.0/include -module ReleaseMPI -IReleaseMPI/
+make[1]: Leaving directory '/remote/lin12/martinelli/Documenti/PROGETTI/ONGOING/new_sys/code/sandbox/cosmomc_WL_2016/source'
+ Number of MPI processes:           8
+ file_root:EUmock_10bin_bfpk15_comparison
+ Random seeds: 30639,  4469 rand_inst:   5
+ Random seeds: 30879,  4473 rand_inst:   7
+ Random seeds: 30979,  4473 rand_inst:   8
+ Random seeds: 30419,  4477 rand_inst:   2
+ Random seeds: 30699,  4485 rand_inst:   4
+ Random seeds: 30407,  4486 rand_inst:   1
+ Random seeds: 30939,  4489 rand_inst:   6
+ Random seeds: 30719,  4497 rand_inst:   3
+ reading WL data set: comparison
+ reading WL data set: comparison
+ reading WL data set: comparison
+ reading WL data set: comparison
+ reading WL data set: comparison
+ reading WL data set: comparison
+ reading WL data set: comparison
+ reading WL data set: comparison
+ read WL data sets
+ read WL data sets
+ read WL data sets
+ read WL data sets
+ read WL data sets
+ read WL data sets
+ Doing non-linear Pk: F
+ Doing CMB lensing: T
+ Doing non-linear lensing: T
+ TT lmax =  2500
+ EE lmax =  2500
+ ET lmax =  2500
+ BB lmax =  2500
+ PP lmax =  2500
+ lmax_computed_cl  =  2500
+ Computing tensors: F
+ max_eta_k         =    14000.00    
+ transfer kmax     =    5.000000    
+ read WL data sets
+ read WL data sets
+ adding parameters for: comparison
+ Fast divided into            1  blocks
+  4 parameters ( 4 slow ( 0 semi-slow),  0 fast ( 0 semi-fast))
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+ skipped unused params: calPlanck acib217 xi asz143 aps100 aps143 aps143217 aps217 aksz kgal100 kgal143 kgal143217 kgal217 cal0 cal2
+           6 Reading checkpoint from chains/EUmock_10bin_bfpk15_comparison_6.chk
+           5 Reading checkpoint from chains/EUmock_10bin_bfpk15_comparison_5.chk
+           7 Reading checkpoint from chains/EUmock_10bin_bfpk15_comparison_7.chk
+           4 Reading checkpoint from chains/EUmock_10bin_bfpk15_comparison_4.chk
+           3 Reading checkpoint from chains/EUmock_10bin_bfpk15_comparison_3.chk
+           8 Reading checkpoint from chains/EUmock_10bin_bfpk15_comparison_8.chk
+           2 Reading checkpoint from chains/EUmock_10bin_bfpk15_comparison_2.chk
+ Matrix_Cholesky: not positive definite 2
+ MpiStop:            5
+ Matrix_Cholesky: not positive definite 2
+ MpiStop:            4
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 5 in communicator MPI_COMM_WORLD 
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
+ Matrix_Cholesky: not positive definite 2
+ MpiStop:            6
+ Matrix_Cholesky: not positive definite 2
+ MpiStop:            3
+ Matrix_Cholesky: not positive definite 2
+ MpiStop:            7
+ Matrix_Cholesky: not positive definite 2
+ MpiStop:            2

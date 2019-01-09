@@ -1,0 +1,15 @@
+num_z_bins =    2
+zbin(1) =      0.50
+zbin(2) =      0.99
+zbin(3) =      3.00
+num_z_window = 1000
+max_z =      3.00
+kmax =      1.00
+ell_max = 2000
+ell_min =   30
+num_z_p = 1000
+fsky =      0.36
+systematics = F
+WL_covmat =%DATASETDIR%WL_mock/test_2bin_covmat.dat
+WL_noise =%DATASETDIR%WL_mock/test_2bin_noise.dat
+window_file =%DATASETDIR%WL_mock/test_2bin_window.dat

@@ -1,0 +1,237 @@
+ar: creating ReleaseMPI/libcamb_recfast.a
+RD_MockMaker.f90(121): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+RD_MockMaker.f90(199): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+redshiftdrift.f90(213): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+redshiftdrift.f90(257): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+redshiftdrift.f90(296): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+redshiftdrift.f90(336): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+35 FORMAT(100(1X,e15.9))
+------------------^
+WL_MockMaker.f90(310): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+WL_MockMaker.f90(534): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+10 format(500(1e12.6,1x))
+----------------^
+wl_mock.f90(236): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+    55 FORMAT(100(1X,e15.9))
+----------------------^
+wl_mock.f90(414): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+    35 FORMAT(100(1X,e15.9))
+----------------------^
+wl_mock.f90(794): remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+          write(40,'(100(1X,e15.9))') ll(il),(addsys(il,ib,ib),ib=1,this%num_z_bins)
+-----------------------------^
+=>> PBS: job killed: walltime 172802 exceeded limit 172800
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007FB5D103F8D0  Unknown               Unknown  Unknown
+cosmomc            0000000000434497  Unknown               Unknown  Unknown
+cosmomc            00000000004338ED  Unknown               Unknown  Unknown
+cosmomc            00000000004339B6  Unknown               Unknown  Unknown
+cosmomc            00000000005AF470  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007FB5D0CA1B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007F9B2871F8D0  Unknown               Unknown  Unknown
+cosmomc            0000000000433A0F  Unknown               Unknown  Unknown
+cosmomc            00000000005AE724  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007F9B28381B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007F106BE378D0  Unknown               Unknown  Unknown
+cosmomc            0000000000433A35  Unknown               Unknown  Unknown
+cosmomc            00000000005AF470  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007F106BA99B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007FAB27F7F8D0  Unknown               Unknown  Unknown
+cosmomc            0000000000434491  Unknown               Unknown  Unknown
+cosmomc            00000000004338ED  Unknown               Unknown  Unknown
+cosmomc            00000000004339B6  Unknown               Unknown  Unknown
+cosmomc            00000000005AF470  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007FAB27BE1B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007F7EAD03F8D0  Unknown               Unknown  Unknown
+cosmomc            00000000004339ED  Unknown               Unknown  Unknown
+cosmomc            00000000005AF470  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007F7EACCA1B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007FD9469278D0  Unknown               Unknown  Unknown
+cosmomc            0000000000434491  Unknown               Unknown  Unknown
+cosmomc            00000000004338ED  Unknown               Unknown  Unknown
+cosmomc            00000000004339B6  Unknown               Unknown  Unknown
+cosmomc            00000000005AF470  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007FD946589B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007F4FE76178D0  Unknown               Unknown  Unknown
+cosmomc            00000000004344AC  Unknown               Unknown  Unknown
+cosmomc            00000000004338ED  Unknown               Unknown  Unknown
+cosmomc            00000000004339B6  Unknown               Unknown  Unknown
+cosmomc            00000000005AF470  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007F4FE7279B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+cosmomc            0000000000760209  Unknown               Unknown  Unknown
+cosmomc            000000000075EADE  Unknown               Unknown  Unknown
+cosmomc            00000000006F4AF2  Unknown               Unknown  Unknown
+cosmomc            000000000068CD98  Unknown               Unknown  Unknown
+cosmomc            0000000000695799  Unknown               Unknown  Unknown
+libpthread.so.0    00007F8FAA72F8D0  Unknown               Unknown  Unknown
+cosmomc            00000000004344B7  Unknown               Unknown  Unknown
+cosmomc            00000000004338ED  Unknown               Unknown  Unknown
+cosmomc            00000000004339B6  Unknown               Unknown  Unknown
+cosmomc            00000000005AF470  Unknown               Unknown  Unknown
+cosmomc            00000000005A73FF  Unknown               Unknown  Unknown
+cosmomc            00000000004F669E  Unknown               Unknown  Unknown
+cosmomc            00000000005BD7CA  Unknown               Unknown  Unknown
+cosmomc            00000000005BCBA7  Unknown               Unknown  Unknown
+cosmomc            00000000005BA2A9  Unknown               Unknown  Unknown
+cosmomc            00000000004CF1CB  Unknown               Unknown  Unknown
+cosmomc            00000000004D050F  Unknown               Unknown  Unknown
+cosmomc            00000000004D15FF  Unknown               Unknown  Unknown
+cosmomc            00000000004CF64A  Unknown               Unknown  Unknown
+cosmomc            00000000004E90F2  Unknown               Unknown  Unknown
+cosmomc            00000000005C505A  Unknown               Unknown  Unknown
+cosmomc            000000000040EF76  Unknown               Unknown  Unknown
+libc.so.6          00007F8FAA391B45  Unknown               Unknown  Unknown
+cosmomc            000000000040EE59  Unknown               Unknown  Unknown

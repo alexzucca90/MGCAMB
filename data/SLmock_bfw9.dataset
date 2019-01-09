@@ -1,0 +1,8 @@
+name = SLmock_bfw9 
+
+#number of redshift drift data points 
+num_red_rd = 5
+RD_debugging = T
+
+RD_file = %DATASETDIR%SLmock_bfw9.txt
+
